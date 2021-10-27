@@ -31,13 +31,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
 
-const db ="mongodb+srv://Olivier:Herimanitra0@cluster0.6kowo.mongodb.net/chatapp?retryWrites=true&w=majority";
+//const db ="mongodb+srv://Olivier:Herimanitra0@cluster0.6kowo.mongodb.net/chatapp?retryWrites=true&w=majority";
 
 
 
 
 mongoose
-	.connect(db, {
+	.connect(database, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 		useCreateIndex: true
@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
 		actif_array.push(user);
 		console.log(" > all connected ; " + sort(actif_array));
 
-		Message.find({})
+		Message.find({user : user })
 			.then((result) => {
 				if (result !== null) io.emit("FETCH_MESSAGE", result);
 			})
@@ -82,7 +82,7 @@ io.on("connection", (socket) => {
 	socket.on("SEND_MESSAGE", (data) => {
 		sendToMe(data)
 			.then((r) => {
-				console.log("result to me ", r);
+				//console.log("result to me ", r);
 				io.emit(`${data.user}`, r);
 			})
 			.catch((err) => {
@@ -91,7 +91,7 @@ io.on("connection", (socket) => {
 
 		sendToFriend(data)
 		.then((r) => {
-			console.log("result to friend ", r);
+			//console.log("result to friend ", r);
 			io.emit(`${data.friend}`, r);
 		})
 		.catch((err) => {
