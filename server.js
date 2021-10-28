@@ -22,7 +22,7 @@ const sendToFriend = require("./middleware/sendtofriend");
 
 const io = new Server(server, {
 	cors: {
-		origin: "http://localhost:3000",
+		origin: "https://chat-app-by-rasolomanana-olivier.netlify.app",
 		methods: ["GET", "POST"],
 	},
 });
