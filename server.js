@@ -22,7 +22,8 @@ const sendToFriend = require("./middleware/sendtofriend");
 
 const io = new Server(server, {
 	cors: {
-		origin: "https://chat-app-by-rasolomanana-olivier.netlify.app",
+		/*origin: "https://chat-app-by-rasolomanana-olivier.netlify.app",*/
+		origin: "http://localhost:3000",
 		methods: ["GET", "POST"],
 	},
 });
@@ -62,6 +63,7 @@ io.on("connection", (socket) => {
 
 		Message.find({ user: user })
 			.then((result) => {
+				console.log('message fetch', result);
 				if (result !== null) io.emit("FETCH_MESSAGE", result);
 			})
 			.catch((err) => {
@@ -77,6 +79,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("SEND_MESSAGE", (data) => {
+		console.log(data);
 		sendToMe(data)
 			.then((r) => {
 				//console.log("result to me ", r);
