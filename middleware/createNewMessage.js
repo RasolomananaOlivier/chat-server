@@ -1,21 +1,16 @@
 const Message = require('../models/message-model');
 
-const createNewMessage  = async (user , friend , id , content , timeStamp) => {
+const createNewMessage = async (userId, friendId) => {
     try {
         const newMsg = new Message({
-            user : user ,
-            friend : friend ,
-            message : [
-                {
-                    id : id ,
-                    author : user ,
-                    content : content ,
-                    timeStamp :  timeStamp,
-                }
-            ]
-        })
-        const save = await newMsg.save()
-        return save
+            access: [userId, friendId],
+            items: [],
+            more: 5,
+            loadAll: false,
+            read: false
+        });
+        const saved = await newMsg.save();
+        return saved;
 
     } catch (error) {
         console.log(error);

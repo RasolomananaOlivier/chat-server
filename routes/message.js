@@ -1,9 +1,45 @@
 const express = require("express");
 const createNewMessage = require("../middleware/createNewMessage");
 const sendToFriend = require("../middleware/sendtofriend");
+const Media = require("../models/media-model");
 const Message = require("../models/message-model");
 
 const app = express();
+
+app.get("/allMessage/:id", async (req, res) => {
+	try {
+
+		const result = await Message.find({});
+		// console.log('>mess', result);
+		const resultFiltered = [];
+		result.forEach(element => {
+			if (element.access.some(elem => elem === req.params.id)) {
+				resultFiltered.push(element);
+			}
+		})
+		console.log('>allmessage', resultFiltered);
+		res.json(resultFiltered);
+	} catch (error) {
+		console.log("> Error  ", error);
+	}
+});
+app.get("/allMedias/:id", async (req, res) => {
+	try {
+
+		const result = await Media.find({});
+		// console.log('>mess', result);
+		const resultFiltered = [];
+		result.forEach(element => {
+			if (element.access.some(elem => elem === req.params.id)) {
+				resultFiltered.push(element);
+			}
+		})
+		// console.log('>allmedia', resultFiltered);
+		res.json(resultFiltered);
+	} catch (error) {
+		console.log("> Error  ", error);
+	}
+});
 
 app.get("/defaultMessage/:user", async (req, res) => {
 	try {
@@ -16,17 +52,7 @@ app.get("/defaultMessage/:user", async (req, res) => {
 	}
 });
 
-app.get("/currentMessage/:userName/:friendName", async (req, res) => {
-	try {
-		const result = await Message.findOne({
-			$and: [{ user: req.params.userName }, { friend: req.params.friendName }],
-		});
 
-		res.json(result);
-	} catch (error) {
-		console.log("> Error  ", error);
-	}
-});
 
 app.post("/send", sendToFriend, async (req, res) => {
 	try {
@@ -66,35 +92,7 @@ app.post("/send", sendToFriend, async (req, res) => {
 	}
 });
 
-const middlewareInteraction = async function (req, res, next) {
-	try {
-		const { user, friend } = req.body;
-		const newMessage = new Message({
-			user: friend,
-			friend: user,
-			messages: [],
-		});
-		const saved = await newMessage.save();
-		next();
-	} catch (error) {
-		console.log(error);
-	}
-};
 
-app.post("/newInteraction", middlewareInteraction, async (req, res) => {
-	try {
-		const { user, friend } = req.body;
-		const newMessage = new Message({
-			user: user,
-			friend: friend,
-			messages: [],
-		});
-		const saved = await newMessage.save();
-		res.json(saved);
-	} catch (error) {
-		console.log(error);
-	}
-});
 
 app.delete("/delete", async (req, res) => {
 	try {
