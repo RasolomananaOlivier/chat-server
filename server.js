@@ -27,19 +27,21 @@ const addNotificationToFriend = require("./middleware/addNotification");
 const createNewMedia = require("./middleware/createNewMedia");
 const Media = require("./models/media-model");
 
-const environment = 'process.env.NODE_ENV' || 'development';
+const environment = process.env.NODE_ENV || 'development';
 console.log(environment);
-let DATABASE;
+let DATABASE, origin;
 if (environment === 'development') {
     DATABASE = database.local;
+    origin = "http://localhost:3000";
 } else {
     DATABASE = database.deploy;
+    origin = 'https://chatapp-v1.netlify.app/login',
 }
 module.exports = DATABASE;
 const io = new Server(server, {
     cors: {
         /*origin: "https://chat-app-by-rasolomanana-olivier.netlify.app",*/
-        origin: "http://localhost:3000",
+        origin: origin,
         methods: ["GET", "POST"],
     },
 });
