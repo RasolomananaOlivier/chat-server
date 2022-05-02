@@ -35,7 +35,7 @@ if (environment === 'development') {
     origin = "http://localhost:3000";
 } else {
     DATABASE = database.deploy;
-    origin = 'https://chatapp-v1.netlify.app/login',
+    origin = 'https://chatapp-v1.netlify.app',
 }
 module.exports = DATABASE;
 const io = new Server(server, {
