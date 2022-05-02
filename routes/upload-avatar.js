@@ -13,9 +13,16 @@ const router = express.Router();
 // For streaming
 const mongoose = require("mongoose");
 const mongodb = require('mongodb');
-const DATABASE = require("../server");
+const { database } = require("../database/config");
 
-
+const environment = process.env.NODE_ENV || 'development';
+console.log(environment);
+let DATABASE;
+if (environment === 'development') {
+    DATABASE = database.local;
+} else {
+    DATABASE = database.deploy;
+}
 
 
 const storage = new GridFsStorage({

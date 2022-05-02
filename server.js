@@ -35,7 +35,6 @@ if (environment === 'development') {
 } else {
     DATABASE = database.deploy;
 }
-module.exports = DATABASE;
 const io = new Server(server, {
     cors: {
         origin: '*',
