@@ -32,16 +32,14 @@ console.log(environment);
 let DATABASE, origin;
 if (environment === 'development') {
     DATABASE = database.local;
-    origin = "http://localhost:3000";
 } else {
     DATABASE = database.deploy;
-    origin = 'https://chatapp-v1.netlify.app',
 }
 module.exports = DATABASE;
 const io = new Server(server, {
     cors: {
         /*origin: "https://chat-app-by-rasolomanana-olivier.netlify.app",*/
-        origin: origin,
+        origin: '*',
         methods: ["GET", "POST"],
     },
 });
