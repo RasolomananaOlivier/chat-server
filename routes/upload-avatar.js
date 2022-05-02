@@ -72,7 +72,7 @@ router.get("/avatar/:fileName", async (req, res) => {
         const fileName = req.params.fileName;
 
         if (req.params.fileName !== 'undefined') {
-            mongodb.MongoClient.connect(process.env.DATABASE_URI, (err, client) => {
+            mongodb.MongoClient.connect(DATABASE, (err, client) => {
                 const db = client.db('chatapp')
                 var bucket = new mongodb.GridFSBucket(db, { bucketName: 'profil' })
                 // console.log(bucket);
