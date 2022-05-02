@@ -12,7 +12,6 @@ const RouterUser = require("./routes/all-users");
 const MessageRouter = require("./routes/message");
 
 const cors = require("cors");
-const { database } = require("./database/config");
 const sort = require("./controllers/sortOnline");
 const sortOffline = require("./controllers/sortOffline");
 const Message = require("./models/message-model");
@@ -26,15 +25,9 @@ const addFriendAndRemoveNot = require("./middleware/addFriendAndRemoveNot");
 const addNotificationToFriend = require("./middleware/addNotification");
 const createNewMedia = require("./middleware/createNewMedia");
 const Media = require("./models/media-model");
+const { DATABASE } = require("./database/config");
 
-const environment = process.env.NODE_ENV || 'development';
-console.log(environment);
-let DATABASE;
-if (environment === 'development') {
-    DATABASE = database.local;
-} else {
-    DATABASE = database.deploy;
-}
+
 const io = new Server(server, {
     cors: {
         origin: '*',

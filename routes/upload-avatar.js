@@ -4,7 +4,7 @@ const { GridFsStorage } = require("multer-gridfs-storage");
 const User = require("../models/user-model");
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-
+const { DATABASE } = require('../database/config');
 
 
 dotenv.config()
@@ -13,16 +13,7 @@ const router = express.Router();
 // For streaming
 const mongoose = require("mongoose");
 const mongodb = require('mongodb');
-const { database } = require("../database/config");
 
-const environment = process.env.NODE_ENV || 'development';
-console.log(environment);
-let DATABASE;
-if (environment === 'development') {
-    DATABASE = database.local;
-} else {
-    DATABASE = database.deploy;
-}
 
 
 const storage = new GridFsStorage({

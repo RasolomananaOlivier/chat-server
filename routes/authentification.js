@@ -55,7 +55,7 @@ app.post("/login", verification, (req, res) => {
 app.get("/verifyToken", (req, res) => {
     console.log(req.headers);
     const token = req.headers['x-access-token'].split(' ')[1]
-    jwt.verify(token, '41388e22b729f9c0a797137d5802036b61dddb5f055a40d9a16a7cb9a5c5793e7e8aea425762ca45852aad5a49ae2dffe29fd14228387ab5b66fb6f779ef23f5', (err, payload) => {
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, payload) => {
 
         if (err) {
             return res.json({ isLoggedIn: false })
