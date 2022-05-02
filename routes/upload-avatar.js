@@ -1,10 +1,11 @@
 const express = require("express");
 const multer = require("multer");
 const { GridFsStorage } = require("multer-gridfs-storage");
-const { database } = require("../database/config");
 const User = require("../models/user-model");
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
+
+
 
 dotenv.config()
 
@@ -12,12 +13,13 @@ const router = express.Router();
 // For streaming
 const mongoose = require("mongoose");
 const mongodb = require('mongodb');
+const DATABASE = require("../server");
 
 
 
 
 const storage = new GridFsStorage({
-    url: database,
+    url: DATABASE,
     file: (req, file) => {
         return {
             bucketName: "profil",

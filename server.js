@@ -27,6 +27,15 @@ const addNotificationToFriend = require("./middleware/addNotification");
 const createNewMedia = require("./middleware/createNewMedia");
 const Media = require("./models/media-model");
 
+const environment = 'process.env.NODE_ENV' || 'development';
+console.log(environment);
+let DATABASE;
+if (environment === 'development') {
+    DATABASE = database.local;
+} else {
+    DATABASE = database.deploy;
+}
+module.exports = DATABASE;
 const io = new Server(server, {
     cors: {
         /*origin: "https://chat-app-by-rasolomanana-olivier.netlify.app",*/
@@ -42,7 +51,7 @@ app.use(cors({ origin: "*" }));
 //const db ="mongodb+srv://Olivier:Herimanitra0@cluster0.6kowo.mongodb.net/chatapp?retryWrites=true&w=majority";
 
 mongoose
-    .connect(database, {
+    .connect(DATABASE, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
