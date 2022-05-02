@@ -29,7 +29,7 @@ const Media = require("./models/media-model");
 
 const environment = process.env.NODE_ENV || 'development';
 console.log(environment);
-let DATABASE, origin;
+let DATABASE;
 if (environment === 'development') {
     DATABASE = database.local;
 } else {
@@ -38,7 +38,6 @@ if (environment === 'development') {
 module.exports = DATABASE;
 const io = new Server(server, {
     cors: {
-        /*origin: "https://chat-app-by-rasolomanana-olivier.netlify.app",*/
         origin: '*',
         methods: ["GET", "POST"],
     },

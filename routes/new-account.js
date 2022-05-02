@@ -38,7 +38,7 @@ app.post("/signup", async (req, res) => {
             })
             const saved = await newUser.save()
             console.log(saved);
-            const token = jwt.sign(JSON.stringify(saved), process.env.TOKEN_SECRET)
+            const token = jwt.sign(JSON.stringify(saved), '41388e22b729f9c0a797137d5802036b61dddb5f055a40d9a16a7cb9a5c5793e7e8aea425762ca45852aad5a49ae2dffe29fd14228387ab5b66fb6f779ef23f5')
             result = {
                 user: saved,
 
