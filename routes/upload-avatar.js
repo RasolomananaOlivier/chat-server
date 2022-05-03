@@ -34,7 +34,7 @@ const upload = multer({ storage });
 router.post("/upload", upload.single("avatar"), async (req, res) => {
 
     try {
-        console.log('>uploading', req.file);
+        // console.log('>uploading', req.file);
         res.json({
             isUpload: true,
             avatarId: req.file.id,

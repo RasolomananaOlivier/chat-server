@@ -17,7 +17,7 @@ app.get("/allMessage/:id", async (req, res) => {
 				resultFiltered.push(element);
 			}
 		})
-		console.log('>allmessage', resultFiltered);
+		// console.log('>allmessage', resultFiltered);
 		res.json(resultFiltered);
 	} catch (error) {
 		console.log("> Error  ", error);
@@ -56,7 +56,7 @@ app.get("/defaultMessage/:user", async (req, res) => {
 
 app.post("/send", sendToFriend, async (req, res) => {
 	try {
-		console.log("> updating user ....");
+		// console.log("> updating user ....");
 		const { user, friend, id, content, timeStamp } = req.body;
 		const research = await Message.findOne({
 			$and: [{ user: user }, { friend: friend }],
@@ -70,7 +70,7 @@ app.post("/send", sendToFriend, async (req, res) => {
 					console.log(err);
 				});
 		} else {
-			console.log("> user messages found");
+			// console.log("> user messages found");
 			research.messages.push({
 				id: id,
 				author: user,
@@ -96,7 +96,7 @@ app.post("/send", sendToFriend, async (req, res) => {
 
 app.delete("/delete", async (req, res) => {
 	try {
-		console.log("----> delete message");
+		// console.log("----> delete message");
 		//console.log(req.body);
 		const { user, friend } = req.body;
 		const deleted = await Message.findOneAndUpdate(

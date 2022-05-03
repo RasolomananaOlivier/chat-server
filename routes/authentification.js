@@ -11,7 +11,7 @@ dotenv.config()
 
 const verification = async (req, res, next) => {
     try {
-        console.log('> Req ', req.body);
+        // console.log('> Req ', req.body);
         const result = await User.findOne({
             email: req.body.email
         });
@@ -53,7 +53,7 @@ app.post("/login", verification, (req, res) => {
 
 
 app.get("/verifyToken", (req, res) => {
-    console.log(req.headers);
+    // console.log(req.headers);
     const token = req.headers['x-access-token'].split(' ')[1]
     jwt.verify(token, process.env.TOKEN_SECRET, (err, payload) => {
 

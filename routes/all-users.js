@@ -73,7 +73,7 @@ app.post('/update-account', async (req, res) => {
                     });
                 }
             })
-            console.log('new friend collection', newFriendsCollections);
+            // console.log('new friend collection', newFriendsCollections);
             friendAccountDoc.friendsCollections = newFriendsCollections;
             await friendAccountDoc.save();
         });

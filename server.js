@@ -76,14 +76,14 @@ io.on("connection", (socket) => {
         console.log(" > connected ; ", user);
         actif_array.push(user);
 
-        console.log(" > all connected ; ", actif_array);
+        // console.log(" > all connected ; ", actif_array);
 
         io.emit("ONLINE_USERS", [... new Set(actif_array)]);
     });
 
     socket.on("LOG_OUT", (user) => {
-        console.log(" > disconnected ; " + user);
-        console.log(" > disconnected arr : ", sortOffline(actif_array, user));
+        // console.log(" > disconnected ; " + user);
+        // console.log(" > disconnected arr : ", sortOffline(actif_array, user));
         actif_array = sortOffline(actif_array, user);
         io.emit("OFFLINE_USERS", actif_array);
     });
@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
 
             let mediaSaved;
             if (item.messageType === 'media') {
-                console.log('new media', mediasId);
+                // console.log('new media', mediasId);
                 const mediaDoc = await Media.findById(mediasId);
                 const mediaId = {
                     mediaId: item.mediaId
@@ -109,7 +109,7 @@ io.on("connection", (socket) => {
                 mediaDoc.collections.push(mediaId);
                 mediaSaved = await mediaDoc.save();
             }
-            console.log('> media saved', mediaSaved);
+            // console.log('> media saved', mediaSaved);
 
 
             socket.emit(`${userId}_NEW_MESSAGE`, savedMessage, mediaSaved);
@@ -123,7 +123,7 @@ io.on("connection", (socket) => {
 
 
     socket.on('SEND_REQUEST', async (data) => {
-        console.log('Request received');
+        // console.log('Request received');
         //  _id is id of the receiver
         const { _id, details } = data;
         const friendId = _id;
@@ -131,7 +131,7 @@ io.on("connection", (socket) => {
 
         result.requests.push(details);
         const saved = await result.save();
-        console.log('friendId', friendId);
+        // console.log('friendId', friendId);
         io.emit(`${friendId}_NEW_REQUEST`, saved.requests);
         // Verify if the 2 persons are already friends
 
