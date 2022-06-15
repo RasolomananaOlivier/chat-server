@@ -1,9 +1,7 @@
 const express = require("express");
 const User = require("../models/user-model");
-const Message = require('../models/message-model')
-const mongodb = require('mongodb');
 const dotenv = require('dotenv');
-const readstream = require("gridfs-stream/lib/readstream");
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -11,6 +9,7 @@ dotenv.config();
 
 app.get("/all-user/:userId", async (req, res) => {
   try {
+    // console.log(req.params.userId);
     const result = await User.find({});
     const userInfo = await User.findById(req.params.userId);
     const result_filtered = [];
@@ -26,8 +25,6 @@ app.get("/all-user/:userId", async (req, res) => {
           avatarFileName: item.avatarFileName,
           email: item.email,
           bio: item.bio,
-
-
         }
         result_filtered.push(newItem);
       }
@@ -96,5 +93,25 @@ app.get("/search", (req, res) => {
 });
 
 
+app.patch('/password/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const correctPassword = await bcrypt.compare(req.body.oldPass, user.passwd)
+    if (correctPassword) {
+      bcrypt.hash(req.body.newPass, 10, async (err, hashed) => {
+        if (err) return res.json({ err: 'hashing password' });
+
+        user.passwd = hashed;
+        await user.save();
+        res.json({ message: 'password updated' });
+      })
+    } else {
+      res.json({ err: 'Wrong password' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ err: 'server error', error })
+  }
+})
 
 module.exports = app;

@@ -5,11 +5,11 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 
-const Router = require("./routes/new-account");
-const RouterLogin = require("./routes/authentification");
-const RouterUpload = require("./routes/upload-avatar");
-const RouterUser = require("./routes/all-users");
-const MessageRouter = require("./routes/message");
+const Router = require("./api/new-account");
+const RouterLogin = require("./api/authentification");
+const RouterUpload = require("./api/upload-avatar");
+const RouterUser = require("./api/all-users");
+const MessageRouter = require("./api/message");
 
 const cors = require("cors");
 const sort = require("./controllers/sortOnline");
