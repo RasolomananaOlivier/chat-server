@@ -1,0 +1,27 @@
+[{
+  "access": ["1", "2"],
+
+  "items": [
+      {
+          "id": "i1",
+          "auth": "1",
+          "messageType": "text",
+          "mediaId": "1564",
+          "content": "Content 1",
+          "timeStamp": "02 50 15",
+          "hasCopy": ["1", "2"]
+      },
+      {
+        "id": "i1",
+        "auth": "2",
+        "messageType": "text",
+        "mediaId": "1564",
+        "content": "Content 1",
+        "timeStamp": "02 50 15",
+        "hasCopy": ["1", "2"]
+    }
+  ],
+  "more": 5,
+  "loadAll": false,
+  "read":false
+}]

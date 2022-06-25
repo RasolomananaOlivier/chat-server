@@ -7,12 +7,12 @@ const MessageSchema = mongoose.Schema({
 
     items: [
         {
-            id: String,
             auth: String,
             messageType: String,
             mediaId: String,
             content: String,
-            timeStamp: String
+            timeStamp: String,
+            hasCopy: [String, String]
         }
     ],
     more: Number,

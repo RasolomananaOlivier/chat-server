@@ -28,7 +28,7 @@ app.post("/signup", async (req, res) => {
         email: email,
         birthday: birthday,
         bio: bio,
-        avatarFileName: avatarFileName,
+        avatarFileName: avatarFileName ?? null,
         passwd: hashedPassword,
         requests: [],
         friendsCollections: [],
