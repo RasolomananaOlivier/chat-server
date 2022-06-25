@@ -7,7 +7,8 @@ const MediaSchema = mongoose.Schema({
 
     collections: [
         {
-            mediaId: String
+            mediaId: String,
+            hasCopy: [String, String]
         }
     ],
 

@@ -130,4 +130,53 @@ app.delete("/message/item/:messageId/:userId/:itemId", async (req, res) => {
 });
 
 
+app.delete("/message/all/:messageId/:userId/:mediaId", async (req, res) => {
+    try {
+        const { messageId, userId, mediaId } = req.params;
+        const message = await Message.findById(messageId);
+        const media = await Media.findById(mediaId)
+
+
+        let newItems = []
+        message.items.forEach(item => {
+            const newHasCopy = item.hasCopy.filter(accessId => accessId !== userId)
+            // Verify if the item has deleted by both users
+            if (newHasCopy.length !== 0) {
+                newItems.push({
+                    _id: item._id,
+                    auth: item.auth,
+                    messageType: item.messageType,
+                    content: item.content,
+                    timeStamp: item.timeStamp,
+                    hasCopy: newHasCopy
+                })
+            }
+        })
+        message.items = newItems;
+        const savedMsg = await message.save();
+
+        let newCollection = []
+        media.collections.forEach(item => {
+            const newHasCopy = item.hasCopy.filter(accessId => accessId !== userId)
+            // Verify if the item has been deleted by both users
+            if (newHasCopy.length !== 0) {
+                newItems.push({
+                    _id: item._id,
+                    hasCopy: newHasCopy,
+                    mediaId: item.mediaId
+                })
+            }
+        })
+        media.collections = newCollection
+        const savedMedia = await media.save()
+
+        res.json({
+            message: savedMsg,
+            media: savedMedia
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 module.exports = app;
