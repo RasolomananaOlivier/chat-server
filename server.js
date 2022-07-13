@@ -22,6 +22,8 @@ const addNotificationToFriend = require("./middleware/addNotification");
 const createNewMedia = require("./middleware/createNewMedia");
 const Media = require("./models/media-model");
 const { DATABASE } = require("./database/config");
+const modifyNicknameHandler = require("./handlers/modifyNicknameHandler");
+const acceptRequestHandler = require("./handlers/acceptRequestHandler");
 
 
 const io = new Server(server, {
@@ -72,14 +74,11 @@ io.on("connection", (socket) => {
         console.log(" > connected ; ", user);
         actif_array.push(user);
 
-        // console.log(" > all connected ; ", actif_array);
-
         io.emit("ONLINE_USERS", [... new Set(actif_array)]);
     });
 
     socket.on("LOG_OUT", (user) => {
-        // console.log(" > disconnected ; " + user);
-        // console.log(" > disconnected arr : ", sortOffline(actif_array, user));
+
         actif_array = sortOffline(actif_array, user);
         io.emit("OFFLINE_USERS", actif_array);
     });
@@ -97,7 +96,6 @@ io.on("connection", (socket) => {
 
             let mediaSaved;
             if (item.messageType === 'media') {
-                // console.log('new media', mediasId);
                 const mediaDoc = await Media.findById(mediasId);
                 const mediaId = {
                     mediaId: item.mediaId
@@ -105,7 +103,6 @@ io.on("connection", (socket) => {
                 mediaDoc.collections.push(mediaId);
                 mediaSaved = await mediaDoc.save();
             }
-            // console.log('> media saved', mediaSaved);
 
 
             socket.emit(`${userId}_NEW_MESSAGE`, savedMessage, mediaSaved);
@@ -121,15 +118,15 @@ io.on("connection", (socket) => {
     socket.on('SEND_REQUEST', async (data) => {
         console.log('Request received');
         //  _id is id of the receiver
-        const { _id, details } = data;
-        const friendId = _id;
+        const { friendId, details } = data;
+
         const result = await User.findOne({ _id: friendId });
 
         result.requests.push(details);
         const saved = await result.save();
         // console.log('friendId', friendId);
         io.emit(`${friendId}_NEW_REQUEST`, saved.requests);
-        // Verify if the 2 persons are already friends
+        //TODO: Verify if the 2 persons are already friends
 
     });
 
@@ -141,30 +138,22 @@ io.on("connection", (socket) => {
      * request has been accepted.
      */
     socket.on('ACCEPT_REQUEST', async (data) => {
-        // console.log(data);
-        //  _id is id of the receiver
-        const { _id, details } = data;
-
-        const newMessageCollection = await createNewMessage(_id, details._id);
-        const newMediaCollection = await createNewMedia(_id, details._id);
-
-        const saved = await AddFriendAndRemoveRequest(_id, details);
-        // console.log('saved 1', saved.friendsCollections);
-        socket.emit(`${_id}_NEW_FRIEND_ACCEPTED`, saved, newMessageCollection, newMediaCollection);
-
-        await AddMeToFriendCollection(_id, details);
-        const notifUpdated = await addNotificationToFriend(_id, details);
-        // console.log('on Notify', notifUpdated);
-        io.emit(`${notifUpdated._id}_NEW_NOTIFICATION`, notifUpdated, newMessageCollection, newMediaCollection);
-        // console.log('Notification sent');
-
+        await acceptRequestHandler(io, data, socket);
     });
 
-
+    socket.on('MODIFY_NICKNAME', async (data) => {
+        console.log('data :>> ', data);
+        await modifyNicknameHandler(io,
+            { userId: data?.userId, newUserNickname: data?.newUserNickname },
+            { friendId: data?.friendId, newFriendNickName: data?.newFriendNickName }
+        )
+    })
 });
 
 const port = process.env.PORT || 5000;
-//console.log(process.env.NODE_ENV);
 
 server.listen(port, () => console.log(`Server running on port ${port} 🔥`));
-// hello
+
+
+
+

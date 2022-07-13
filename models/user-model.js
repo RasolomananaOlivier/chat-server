@@ -8,16 +8,29 @@ const UserSchema = mongoose.Schema({
     firstName: String,
     lastName: String,
     passwd: String,
+    nickName: [
+        {
+            messageId: String,
+            value: String
+        }
+    ],
     bio: String,
-    birthday: String,
+    birthday: Date,
     avatarFileName: String,
     friendsCollections: [
         {
             _id: String,
             lastName: String,
             firstName: String,
+            nickName: [
+                {
+                    messageId: String,
+                    value: String
+                }
+            ],
             avatarFileName: String,
             email: String,
+            birthday: Date,
             bio: String,
         }
     ],
@@ -26,8 +39,15 @@ const UserSchema = mongoose.Schema({
             _id: String,
             lastName: String,
             firstName: String,
+            nickName: [
+                {
+                    messageId: String,
+                    value: String
+                }
+            ],
             avatarFileName: String,
             email: String,
+            birthday: Date,
             bio: String,
         }
     ],

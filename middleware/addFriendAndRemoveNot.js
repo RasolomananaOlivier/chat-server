@@ -1,22 +1,22 @@
 const User = require('../models/user-model.js')
 
-async function AddFriendAndRemoveRequest(id, details) {
+async function AddFriendAndRemoveRequest(id, friendData) {
     try {
-        const result = await User.findById(id);
-        result.friendsCollections.push(details);
+        const userDoc = await User.findById(id);
+        userDoc.friendsCollections.push(friendData);
 
 
         // Remove it from the request
         const newRequests = [];
-        result.requests.forEach(req => {
-            if (req._id !== details._id) {
+        userDoc.requests.forEach(req => {
+            if (req._id !== friendData._id) {
                 newRequests.push(req);
             }
         })
-        result.requests = newRequests;
+        userDoc.requests = newRequests;
 
 
-        const saved = await result.save();
+        const saved = await userDoc.save();
 
         return saved;
     } catch (error) {
@@ -25,26 +25,26 @@ async function AddFriendAndRemoveRequest(id, details) {
 
 }
 
-async function AddMeToFriendCollection(id, details) {
+async function AddUserDataToFriendCollection(userId, details) {
     try {
-        const result = await User.findById(id);
+        const userDoc = await User.findById(userId);
 
-        const result2 = await User.findById(details._id);
+        const friendDoc = await User.findById(details._id);
 
-        const details2 = {
-            _id: result._id,
-            firstName: result.firstName,
-            lastName: result.lastName,
-            avatarFileName: result.avatarFileName,
-            email: result.email,
-            bio: result.bio
+        const data = {
+            _id: `${userDoc._id}`,
+            firstName: userDoc.firstName,
+            lastName: userDoc.lastName,
+            nickName: userDoc.nickName,
+            avatarFileName: userDoc.avatarFileName,
+            email: userDoc.email,
+            bio: userDoc.bio
         }
-        // console.log('verify avatar id', details2);
-        result2.friendsCollections.push(details2);
+        console.log('verify avatar id', data);
+        friendDoc.friendsCollections.push(data);
 
-
-        // console.log(result2);
-        const saved = await result2.save();
+        // console.log(friendDoc);
+        const saved = await friendDoc.save();
 
         return saved;
     } catch (error) {
@@ -54,6 +54,6 @@ async function AddMeToFriendCollection(id, details) {
 }
 
 module.exports = {
-    AddMeToFriendCollection: AddMeToFriendCollection,
-    AddFriendAndRemoveRequest: AddFriendAndRemoveRequest
+    AddUserDataToFriendCollection,
+    AddFriendAndRemoveRequest
 };

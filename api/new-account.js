@@ -24,6 +24,7 @@ app.post("/signup", async (req, res) => {
             const newUser = new User({
                 firstName: firstName,
                 lastName: lastName,
+                nickName: [],
                 email: email,
                 birthday: birthday ?? null,
                 bio: bio,

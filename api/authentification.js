@@ -15,7 +15,7 @@ const verification = async (req, res, next) => {
         const result = await User.findOne({
             email: req.body.email
         });
-
+        console.log('result.friendsCollections :>> ', result.friendsCollections);
 
         if (result === null) {
             // console.log('> Not found');

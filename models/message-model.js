@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 
 const MessageSchema = mongoose.Schema({
     access: [String, String],
-
     items: [
         {
             auth: String,
@@ -12,7 +11,8 @@ const MessageSchema = mongoose.Schema({
             mediaId: String,
             content: String,
             timeStamp: String,
-            hasCopy: [String, String]
+            hasCopy: [String, String],
+            reactions: [String],
         }
     ],
     more: Number,
