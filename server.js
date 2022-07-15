@@ -15,7 +15,6 @@ const NotificationRouter = require('./api/notification')
 const cors = require("cors");
 const sortOffline = require("./controllers/sortOffline");
 const Message = require("./models/message-model");
-const createNewMessage = require("./middleware/createNewMessage");
 const User = require("./models/user-model");
 const { AddFriendAndRemoveRequest, AddMeToFriendCollection } = require("./middleware/addFriendAndRemoveNot");
 const addNotificationToFriend = require("./middleware/addNotification");
@@ -24,6 +23,8 @@ const Media = require("./models/media-model");
 const { DATABASE } = require("./database/config");
 const modifyNicknameHandler = require("./handlers/modifyNicknameHandler");
 const acceptRequestHandler = require("./handlers/acceptRequestHandler");
+const { createMessageGroup } = require("./middleware/createNewMessage");
+const { sendMessageHandler, addMessage, addMedia } = require("./handlers/sendMessageHandler");
 
 
 const io = new Server(server, {
@@ -32,6 +33,7 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
     },
 });
+exports.io = io;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -84,33 +86,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("SEND_MESSAGE", async (data, item) => {
-        try {
-
-            const { userId, friendId, messagesId, mediasId } = data;
-
-
-            const message = await Message.findById(messagesId);
-
-            message.items.push(item);
-            const savedMessage = await message.save();
-
-            let mediaSaved;
-            if (item.messageType === 'media') {
-                const mediaDoc = await Media.findById(mediasId);
-                const mediaId = {
-                    mediaId: item.mediaId
-                }
-                mediaDoc.collections.push(mediaId);
-                mediaSaved = await mediaDoc.save();
-            }
-
-
-            socket.emit(`${userId}_NEW_MESSAGE`, savedMessage, mediaSaved);
-            io.emit(`${friendId}_NEW_MESSAGE`, savedMessage, mediaSaved);
-        } catch (error) {
-            console.log(error);
-        }
-
+        await sendMessageHandler(io, socket, data, item);
     });
 
 
@@ -138,7 +114,7 @@ io.on("connection", (socket) => {
      * request has been accepted.
      */
     socket.on('ACCEPT_REQUEST', async (data) => {
-        await acceptRequestHandler(io, data, socket);
+        await acceptRequestHandler(io, socket, data);
     });
 
     socket.on('MODIFY_NICKNAME', async (data) => {
@@ -148,11 +124,43 @@ io.on("connection", (socket) => {
             { friendId: data?.friendId, newFriendNickName: data?.newFriendNickName }
         )
     })
+
+
+    socket.on('CREATE_GROUP', async (data) => {
+        const messageGroup = await createMessageGroup(
+            data.adminId,
+            data.members,
+            data.name,
+            data.pictureUrl
+        )
+
+        data
+            .members
+            .forEach(memberId => socket.emit(`GROUP_CREATED_${memberId}`, messageGroup))
+
+    })
+
+    socket.on('JOIN_GROUP', async (messageId) => {
+        socket.join(`${messageId}`);
+        console.log(`${socket.id} has join ${messageId}`);
+    })
+
+    socket.on('SEND_MESSAGE_GROUP', async (data, messageItem) => {
+        const message = await addMessage(data.messageId, messageItem)
+
+        let media;
+        if (messageItem.messageType === 'media') {
+            media = await addMedia(data.mediaId, item, media);
+        }
+
+        io.to(`${data.messageId}`).emit('GROUP_MESSAGE', { message, media })
+    })
 });
 
 const port = process.env.PORT || 5000;
 
 server.listen(port, () => console.log(`Server running on port ${port} 🔥`));
+
 
 
 

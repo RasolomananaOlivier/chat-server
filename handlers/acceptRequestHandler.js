@@ -1,10 +1,10 @@
 const { AddFriendAndRemoveRequest, AddUserDataToFriendCollection } = require("../middleware/addFriendAndRemoveNot");
 const addNotificationToFriend = require("../middleware/addNotification");
 const createNewMedia = require("../middleware/createNewMedia");
-const createNewMessage = require("../middleware/createNewMessage");
+const { createNewMessage } = require("../middleware/createNewMessage");
 const User = require("../models/user-model");
 
-async function acceptRequestHandler(io, data, socket) {
+async function acceptRequestHandler(io, socket, data) {
     const { _id, friendData } = data;
     const userId = _id;
     const friendId = friendData._id;

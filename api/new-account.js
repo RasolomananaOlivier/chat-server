@@ -25,6 +25,7 @@ app.post("/signup", async (req, res) => {
                 firstName: firstName,
                 lastName: lastName,
                 nickName: [],
+                groups: [],
                 email: email,
                 birthday: birthday ?? null,
                 bio: bio,

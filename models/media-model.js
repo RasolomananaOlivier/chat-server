@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const MediaSchema = mongoose.Schema({
     access: [String, String],
-
+    type: String,
     collections: [
         {
             mediaId: String,

@@ -16,4 +16,27 @@ const createNewMessage = async (userId, friendId) => {
         console.log(error);
     }
 };
-module.exports = createNewMessage;
+
+const createMessageGroup = async (adminId, members, name, pictureUrl) => {
+    try {
+        const newMsg = new Message({
+            admin: adminId,
+            access: members,
+            name,
+            pictureUrl,
+
+            items: [],
+            more: 5,
+            loadAll: false,
+            read: false
+        });
+        return await newMsg.save();
+
+    } catch (error) {
+        console.log(error);
+    }
+};
+module.exports = {
+    createNewMessage,
+    createMessageGroup
+};

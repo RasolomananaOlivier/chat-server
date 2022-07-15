@@ -3,7 +3,14 @@ const mongoose = require("mongoose");
 
 
 const MessageSchema = mongoose.Schema({
-    access: [String, String],
+    access: [String],
+    type: String, // type : private | public
+    // Field only for public message
+    admin: String,
+    name: String,
+    pictureUrl: String,
+    // #############################
+
     items: [
         {
             auth: String,
@@ -11,7 +18,7 @@ const MessageSchema = mongoose.Schema({
             mediaId: String,
             content: String,
             timeStamp: String,
-            hasCopy: [String, String],
+            hasCopy: [String],
             reactions: [String],
         }
     ],

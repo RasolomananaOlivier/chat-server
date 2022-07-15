@@ -14,6 +14,7 @@ const UserSchema = mongoose.Schema({
             value: String
         }
     ],
+    groups: [String],
     bio: String,
     birthday: Date,
     avatarFileName: String,
