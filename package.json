@@ -4,9 +4,9 @@
   "description": "server",
   "main": "server.js",
   "engines": {
-    "node": "17.x",
-    "npm": "6.14.15",
-    "yarn": "1.22.18"
+    "node": "16.x",
+    "npm": "6.14.x",
+    "yarn": "1.22.x"
   },
   "author": "olivier",
   "license": "MIT",
@@ -26,6 +26,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1 ",
     "start": "nodemon server.js",
-    "dev" : "nodemon server.js"
+    "dev": "nodemon index.js"
   }
 }
