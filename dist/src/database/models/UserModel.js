@@ -16,6 +16,7 @@ userSchema.pre("save", async function (next) {
     if (user.isModified("password")) {
         user.password = await bcrypt_1.default.hash(user.password, 8);
     }
+    w;
     next();
 });
 userSchema.methods.getFullName = function () {

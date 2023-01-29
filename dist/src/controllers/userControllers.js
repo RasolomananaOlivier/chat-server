@@ -10,8 +10,15 @@ const userServices_1 = require("../services/userServices");
 const getAllUsers = async (req, res) => {
     res.send({ data: await UserModel_1.default.find() });
 };
-const getOneUser = (req, res) => {
-    res.json({ message: "getoneuser called" });
+const getOneUser = async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const user = await userServices_1.UserServices.findUserById(userId);
+        res.json({ data: user });
+    }
+    catch (error) {
+        res.status(404).json({ status: 404, error: error.message });
+    }
 };
 const createOneUser = async (req, res) => {
     try {

@@ -4,13 +4,25 @@ import { validationResult } from "express-validator";
 import { userRegistrationNormalizer } from "../utils/normalizes/userRegistrationNormalizer";
 import { createToken } from "../utils/createToken";
 import { UserServices } from "../services/userServices";
+import { AppError } from "../utils/appError";
 
 const getAllUsers = async (req: Request, res: Response) => {
   res.send({ data: await UserModel.find() });
 };
 
-const getOneUser = (req: Request, res: Response) => {
-  res.json({ message: "getoneuser called" });
+const getOneUser = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  try {
+    const user = await UserServices.findUserById(userId);
+
+    res.json({ data: user });
+  } catch (error) {
+    if (error instanceof AppError) {
+      res.status(error.status).json({ status: 404, error: error.message });
+    } else {
+      res.status(500).json({ error: "Unexpected error" });
+    }
+  }
 };
 
 const createOneUser = async (req: Request, res: Response) => {
@@ -29,7 +41,8 @@ const createOneUser = async (req: Request, res: Response) => {
       token: `bearer ${token}`,
     });
   } catch (error) {
-    res.status(400).json({ status: 400, error: error.message });
+    if (error instanceof AppError)
+      res.status(400).json({ status: 400, error: error.message });
   }
 };
 
