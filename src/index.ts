@@ -1,13 +1,16 @@
-const express = require("express");
-const dbConnection = require("./src/database/connect");
-const AuthRoutes = require("./src/v1/routes/authRoutes");
-const MessageRoutes = require("./src/v1/routes/messageRoutes");
-const UserRoutes = require("./src/v1/routes/userRoutes");
+import express from "express";
+import dbConnection from "./database/connect";
+import AuthRoutes from "./v1/routes/authRoutes";
+import MessageRoutes from "./v1/routes/messageRoutes";
+import UserRoutes from "./v1/routes/userRoutes";
 const app = express();
 
 const port = process.env.PORT || 5000;
 
 dbConnection();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/users", UserRoutes);
 app.use("/api/v1/messages", MessageRoutes);
