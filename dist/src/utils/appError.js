@@ -7,5 +7,12 @@ class AppError extends Error {
         this.name = name;
         this.status = status;
     }
+    response(res) {
+        res.status(this.status).json({
+            status: this.status,
+            name: this.name,
+            error: this.message,
+        });
+    }
 }
 exports.AppError = AppError;

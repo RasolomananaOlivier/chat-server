@@ -7,7 +7,7 @@ exports.login = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserModel_1 = __importDefault(require("../database/models/UserModel"));
 const login = async (arg) => {
-    const foundUser = await UserModel_1.default.findOne({ email: arg.email });
+    const foundUser = await UserModel_1.default.findOne({ "email.address": arg.email });
     if (!foundUser) {
         throw new Error(`User with email ${arg.email} doesn't exist`);
     }

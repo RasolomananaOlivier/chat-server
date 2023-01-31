@@ -7,7 +7,7 @@ interface ILogin {
 }
 
 export const login = async (arg: ILogin) => {
-  const foundUser = await UserModel.findOne({ email: arg.email });
+  const foundUser = await UserModel.findOne({ "email.address": arg.email });
   if (!foundUser) {
     throw new Error(`User with email ${arg.email} doesn't exist`);
   }

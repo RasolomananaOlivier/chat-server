@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const UserModel_1 = __importDefault(require("../database/models/UserModel"));
-const userRegistrationNormalizer_1 = require("../utils/normalizes/userRegistrationNormalizer");
 const createToken_1 = require("../utils/createToken");
 const userServices_1 = require("../services/userServices");
+const appError_1 = require("../utils/appError");
+const userFormater_1 = require("../utils/formaters/userFormater");
 const getAllUsers = async (req, res) => {
     res.send({ data: await UserModel_1.default.find() });
 };
@@ -17,12 +18,17 @@ const getOneUser = async (req, res) => {
         res.json({ data: user });
     }
     catch (error) {
-        res.status(404).json({ status: 404, error: error.message });
+        if (error instanceof appError_1.AppError) {
+            error.response(res);
+        }
+        else {
+            res.status(500).json({ message: "Unexpected error", error });
+        }
     }
 };
 const createOneUser = async (req, res) => {
     try {
-        const userSaved = await userServices_1.UserServices.register((0, userRegistrationNormalizer_1.userRegistrationNormalizer)(req));
+        const userSaved = await userServices_1.UserServices.register(userFormater_1.UserFormater.beforeRegistration(req));
         const token = (0, createToken_1.createToken)({
             userId: userSaved._id,
             firstname: userSaved.firstname,
@@ -34,14 +40,62 @@ const createOneUser = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(400).json({ status: 400, error: error.message });
+        console.log(error);
+        if (error instanceof appError_1.AppError)
+            res.status(400).json({ status: 400, error: error.message });
     }
 };
-const updateOneUser = (req, res) => {
-    res.json({ message: "getoneuser called" });
+const updateOneUser = async (req, res) => {
+    if (Object.keys(req.query).length === 0) {
+        try {
+            const updatedUser = await userServices_1.UserServices.updatePersonalInformation(userFormater_1.UserFormater.beforeUpdate(req));
+            res.json({ status: 200, data: updatedUser });
+        }
+        catch (error) {
+            if (error instanceof appError_1.AppError)
+                error.response(res);
+        }
+    }
+    else {
+        if (req.query.email === "update") {
+            try {
+                const userEmailUpdated = await userServices_1.UserServices.updateEmail(userFormater_1.UserFormater.beforeEmailUpdate(req));
+                res.json({ status: 200, data: userEmailUpdated });
+            }
+            catch (error) {
+                console.log(error);
+                if (error instanceof appError_1.AppError)
+                    error.response(res);
+            }
+        }
+        else if (req.query.email === "validate") {
+        }
+        else if (req.query.friend === "add" || req.query.friend === "remove") {
+            try {
+                const { user, friend } = await userServices_1.UserServices.relation({
+                    ...userFormater_1.UserFormater.beforeHandlingRelation(req),
+                    type: req.query.friend,
+                });
+                res.json({ status: 200, data: { user, friend } });
+            }
+            catch (error) {
+                console.log(error);
+                if (error instanceof appError_1.AppError) {
+                    error.response(res);
+                }
+            }
+        }
+    }
 };
-const deleteOneUser = (req, res) => {
-    return;
+const deleteOneUser = async (req, res) => { };
+const deleteUsers = async (req, res) => {
+    try {
+        await userServices_1.UserServices.deleteAllUsers();
+        res.json({ status: 200, message: "All users deleted" });
+    }
+    catch (error) {
+        console.log(error);
+    }
 };
 const UserControllers = {
     getAllUsers,
@@ -49,5 +103,6 @@ const UserControllers = {
     createOneUser,
     updateOneUser,
     deleteOneUser,
+    deleteUsers,
 };
 exports.default = UserControllers;

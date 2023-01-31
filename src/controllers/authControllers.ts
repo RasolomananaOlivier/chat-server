@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
 import AuthServices from "../services/authServices";
 import { createToken } from "../utils/createToken";
-const {
-  userLoginNormalizer,
-} = require("../utils/normalizes/userLoginNormalizer");
+import { UserFormater } from "../utils/formaters/userFormater";
 
 const login = async (req: Request, res: Response) => {
   try {
-    const user = await AuthServices.login(userLoginNormalizer(req));
+    const user = await AuthServices.login(UserFormater.beforeLogin(req));
 
     const token = createToken({
       userId: user._id,
@@ -27,6 +25,4 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-const AuthControllers = { login };
-
-module.exports = AuthControllers;
+export const AuthControllers = { login };

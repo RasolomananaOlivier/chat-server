@@ -22,6 +22,8 @@ UserRoutes.post(
 
 UserRoutes.put("/:userId", UserControllers.updateOneUser);
 
+UserRoutes.delete("/", UserControllers.deleteUsers);
+
 UserRoutes.delete("/:userId", UserControllers.deleteOneUser);
 
 export default UserRoutes;

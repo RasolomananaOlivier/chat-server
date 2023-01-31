@@ -4,15 +4,27 @@ import bcrypt from "bcrypt";
 export interface IUser {
   firstname: string;
   lastname: string;
-  email: string;
+  email: {
+    address: string;
+    verified: boolean;
+  };
   password: string;
+  friends?: string[];
+}
+
+export interface IUserUpdate extends IUser {
+  userId: string;
 }
 
 const userSchema = new Schema<IUser>({
   firstname: { type: String, require: true },
   lastname: { type: String, require: true },
-  email: { type: String, require: true },
+  email: {
+    address: { type: String, require: true },
+    verified: { type: Boolean, require: false },
+  },
   password: { type: String, require: true },
+  friends: [String],
 });
 
 // Hash the password before saving the user data
@@ -21,7 +33,7 @@ userSchema.pre("save", async function (next) {
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 8);
   }
-  w;
+
   next();
 });
 

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userRegistrationNormalizer = void 0;
-const userRegistrationNormalizer = (req) => {
+exports.UserFormater = void 0;
+const beforeRegistration = (req) => {
     return {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
@@ -12,4 +12,13 @@ const userRegistrationNormalizer = (req) => {
         password: req.body.password,
     };
 };
-exports.userRegistrationNormalizer = userRegistrationNormalizer;
+const beforeLogin = (req) => {
+    return {
+        email: req.body.email,
+        password: req.body.password,
+    };
+};
+exports.UserFormater = {
+    beforeRegistration,
+    beforeLogin,
+};

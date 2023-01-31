@@ -8,15 +8,18 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const userSchema = new mongoose_1.Schema({
     firstname: { type: String, require: true },
     lastname: { type: String, require: true },
-    email: { type: String, require: true },
+    email: {
+        address: { type: String, require: true },
+        verified: { type: Boolean, require: false },
+    },
     password: { type: String, require: true },
+    friends: [String],
 });
 userSchema.pre("save", async function (next) {
     const user = this;
     if (user.isModified("password")) {
         user.password = await bcrypt_1.default.hash(user.password, 8);
     }
-    w;
     next();
 });
 userSchema.methods.getFullName = function () {

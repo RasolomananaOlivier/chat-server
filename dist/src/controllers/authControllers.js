@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthControllers = void 0;
 const authServices_1 = __importDefault(require("../services/authServices"));
 const createToken_1 = require("../utils/createToken");
-const { userLoginNormalizer, } = require("../utils/normalizes/userLoginNormalizer");
+const userFormater_1 = require("../utils/formaters/userFormater");
 const login = async (req, res) => {
     try {
-        const user = await authServices_1.default.login(userLoginNormalizer(req));
+        const user = await authServices_1.default.login(userFormater_1.UserFormater.beforeLogin(req));
         const token = (0, createToken_1.createToken)({
             userId: user._id,
             firstname: user.firstname,
@@ -26,5 +27,4 @@ const login = async (req, res) => {
         });
     }
 };
-const AuthControllers = { login };
-module.exports = AuthControllers;
+exports.AuthControllers = { login };

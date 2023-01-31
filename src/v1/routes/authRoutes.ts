@@ -1,10 +1,9 @@
-const express = require("express");
-const AuthControllers = require("../../controllers/authControllers");
-const UserControllers = require("../../controllers/userControllers");
-const {
+import express from "express";
+import { AuthControllers } from "../../controllers/authControllers";
+import {
   userLoginRoules,
   validateLogin,
-} = require("../../middlewares/validateLogin");
+} from "../../middlewares/validateLogin";
 const AuthRoutes = express.Router();
 
 AuthRoutes.post(

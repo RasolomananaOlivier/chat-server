@@ -1,3 +1,5 @@
+import { Response } from "express";
+
 interface IError {
   name: string;
   message: string;
@@ -10,5 +12,13 @@ export class AppError extends Error {
     super(message);
     this.name = name;
     this.status = status;
+  }
+
+  response(res: Response) {
+    res.status(this.status).json({
+      status: this.status,
+      name: this.name,
+      error: this.message,
+    });
   }
 }
