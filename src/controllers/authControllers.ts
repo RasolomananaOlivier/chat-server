@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import AuthServices from "../services/authServices";
+import { AppError } from "../utils/appError";
 import { createToken } from "../utils/createToken";
 import { UserFormater } from "../utils/formaters/userFormater";
 
@@ -18,10 +19,11 @@ const login = async (req: Request, res: Response) => {
       token: `bearer ${token}`,
     });
   } catch (error) {
-    res.status(400).json({
-      status: 400,
-      error: error.message,
-    });
+    if (error instanceof AppError)
+      res.status(400).json({
+        status: 400,
+        error: error.message,
+      });
   }
 };
 

@@ -4,23 +4,43 @@ import { createToken } from "../utils/createToken";
 import { UserServices } from "../services/userServices";
 import { AppError } from "../utils/appError";
 import { UserFormater } from "../utils/formaters/userFormater";
-import { body, validationResult } from "express-validator";
 
 const getAllUsers = async (req: Request, res: Response) => {
-  res.send({ data: await UserModel.find() });
+  res.status(200).send({ data: await UserModel.find() });
 };
 
 const getOneUser = async (req: Request, res: Response) => {
   const userId = req.params.userId;
+
   try {
     const user = await UserServices.findUserById(userId);
 
-    res.json({ data: user });
+    res.json(user);
   } catch (error) {
     if (error instanceof AppError) {
       error.response(res);
-    } else {
-      res.status(500).json({ message: "Unexpected error", error });
+    }
+  }
+};
+
+const getUserFriends = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+
+  try {
+    const user = await UserServices.findUserById(userId);
+
+    let friends: IUser[] = [];
+    if (user.friends) {
+      for (const friendId of user.friends) {
+        const friend = await UserServices.findUserById(friendId);
+        friends.push(friend);
+      }
+    }
+
+    res.json(friends);
+  } catch (error) {
+    if (error instanceof AppError) {
+      error.response(res);
     }
   }
 };
@@ -36,67 +56,41 @@ const createOneUser = async (req: Request, res: Response) => {
       lastname: userSaved.lastname,
     });
 
-    res.json({
+    res.status(201).json({
       data: userSaved,
       token: `bearer ${token}`,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
 
     if (error instanceof AppError)
       res.status(400).json({ status: 400, error: error.message });
   }
 };
 
-const updateOneUser = async (req: Request, res: Response) => {
-  // Check if there is a query
-  if (Object.keys(req.query).length === 0) {
-    // Update personnal information
-    try {
-      const updatedUser = await UserServices.updatePersonalInformation(
-        UserFormater.beforeUpdate(req)
-      );
+const updateInformation = async (req: Request, res: Response) => {
+  try {
+    const updatedUser = await UserServices.updatePersonalInformation(
+      UserFormater.beforeUpdate(req)
+    );
 
-      res.json({ status: 200, data: updatedUser });
-    } catch (error) {
-      if (error instanceof AppError) error.response(res);
-    }
-  } else {
-    // Updating user email
-    if (req.query.email === "update") {
-      try {
-        // TODO: Validate email before processing
+    res.json({ status: 200, data: updatedUser });
+  } catch (error) {
+    if (error instanceof AppError) error.response(res);
+  }
+};
 
-        const userEmailUpdated = await UserServices.updateEmail(
-          UserFormater.beforeEmailUpdate(req)
-        );
+const updateEmail = async (req: Request, res: Response) => {
+  try {
+    // TODO: Validate email before processing
 
-        res.json({ status: 200, data: userEmailUpdated });
-      } catch (error) {
-        console.log(error);
-        if (error instanceof AppError) error.response(res);
-      }
-      // Validating email
-    } else if (req.query.email === "validate") {
-      // TODO: Validate the email provided by the user
-      // Adding new friend
-    } else if (req.query.friend === "add" || req.query.friend === "remove") {
-      // TODO: Validate if the friendId in body exists
-      try {
-        const { user, friend } = await UserServices.relation({
-          ...UserFormater.beforeHandlingRelation(req),
-          type: req.query.friend,
-        });
+    const userEmailUpdated = await UserServices.updateEmail(
+      UserFormater.beforeEmailUpdate(req)
+    );
 
-        res.json({ status: 200, data: { user, friend } });
-      } catch (error) {
-        console.log(error);
-
-        if (error instanceof AppError) {
-          error.response(res);
-        }
-      }
-    }
+    res.json({ status: 200, data: userEmailUpdated });
+  } catch (error) {
+    if (error instanceof AppError) error.response(res);
   }
 };
 
@@ -114,10 +108,12 @@ const deleteUsers = async (req: Request, res: Response) => {
 const UserControllers = {
   getAllUsers,
   getOneUser,
+  getUserFriends,
   createOneUser,
-  updateOneUser,
   deleteOneUser,
   deleteUsers,
+  updateInformation,
+  updateEmail,
 };
 
 export default UserControllers;

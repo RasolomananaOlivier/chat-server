@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthControllers = void 0;
 const authServices_1 = __importDefault(require("../services/authServices"));
+const appError_1 = require("../utils/appError");
 const createToken_1 = require("../utils/createToken");
 const userFormater_1 = require("../utils/formaters/userFormater");
 const login = async (req, res) => {
@@ -21,10 +22,11 @@ const login = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(400).json({
-            status: 400,
-            error: error.message,
-        });
+        if (error instanceof appError_1.AppError)
+            res.status(400).json({
+                status: 400,
+                error: error.message,
+            });
     }
 };
 exports.AuthControllers = { login };

@@ -8,4 +8,4 @@ const authControllers_1 = require("../../controllers/authControllers");
 const validateLogin_1 = require("../../middlewares/validateLogin");
 const AuthRoutes = express_1.default.Router();
 AuthRoutes.post("/login", (0, validateLogin_1.userLoginRoules)(), validateLogin_1.validateLogin, authControllers_1.AuthControllers.login);
-module.exports = AuthRoutes;
+exports.default = AuthRoutes;

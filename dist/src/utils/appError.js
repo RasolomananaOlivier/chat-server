@@ -8,10 +8,12 @@ class AppError extends Error {
         this.status = status;
     }
     response(res) {
-        res.status(this.status).json({
-            status: this.status,
-            name: this.name,
-            error: this.message,
+        return res.status(this.status).json({
+            error: {
+                status: this.status,
+                name: this.name,
+                error: this.message,
+            },
         });
     }
 }

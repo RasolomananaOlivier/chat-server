@@ -1,7 +1,7 @@
-import { model, Schema } from "mongoose";
+import { Document, Model, model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
-export interface IUser {
+export interface IUserDocument extends Document {
   firstname: string;
   lastname: string;
   email: {
@@ -12,11 +12,24 @@ export interface IUser {
   friends?: string[];
 }
 
+export interface IUser extends IUserDocument {
+  getFullname: () => string;
+}
+
+interface IUserModel extends Model<IUserDocument, {}> {}
+export interface IUserPostRequest {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  friends?: string[];
+}
+
 export interface IUserUpdate extends IUser {
   userId: string;
 }
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema<IUser, IUserModel>({
   firstname: { type: String, require: true },
   lastname: { type: String, require: true },
   email: {
@@ -38,7 +51,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // TODO : Configure ts for support custome methods on schema
-userSchema.methods.getFullName = function () {
+userSchema.methods.getFullname = function () {
   return `${this.firstname} ${this.lastname}`;
 };
 

@@ -9,20 +9,36 @@ const userServices_1 = require("../services/userServices");
 const appError_1 = require("../utils/appError");
 const userFormater_1 = require("../utils/formaters/userFormater");
 const getAllUsers = async (req, res) => {
-    res.send({ data: await UserModel_1.default.find() });
+    res.status(200).send({ data: await UserModel_1.default.find() });
 };
 const getOneUser = async (req, res) => {
     const userId = req.params.userId;
     try {
         const user = await userServices_1.UserServices.findUserById(userId);
-        res.json({ data: user });
+        res.json(user);
     }
     catch (error) {
         if (error instanceof appError_1.AppError) {
             error.response(res);
         }
-        else {
-            res.status(500).json({ message: "Unexpected error", error });
+    }
+};
+const getUserFriends = async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const user = await userServices_1.UserServices.findUserById(userId);
+        let friends = [];
+        if (user.friends) {
+            for (const friendId of user.friends) {
+                const friend = await userServices_1.UserServices.findUserById(friendId);
+                friends.push(friend);
+            }
+        }
+        res.json(friends);
+    }
+    catch (error) {
+        if (error instanceof appError_1.AppError) {
+            error.response(res);
         }
     }
 };
@@ -34,57 +50,34 @@ const createOneUser = async (req, res) => {
             firstname: userSaved.firstname,
             lastname: userSaved.lastname,
         });
-        res.json({
+        res.status(201).json({
             data: userSaved,
             token: `bearer ${token}`,
         });
     }
     catch (error) {
-        console.log(error);
         if (error instanceof appError_1.AppError)
             res.status(400).json({ status: 400, error: error.message });
     }
 };
-const updateOneUser = async (req, res) => {
-    if (Object.keys(req.query).length === 0) {
-        try {
-            const updatedUser = await userServices_1.UserServices.updatePersonalInformation(userFormater_1.UserFormater.beforeUpdate(req));
-            res.json({ status: 200, data: updatedUser });
-        }
-        catch (error) {
-            if (error instanceof appError_1.AppError)
-                error.response(res);
-        }
+const updateInformation = async (req, res) => {
+    try {
+        const updatedUser = await userServices_1.UserServices.updatePersonalInformation(userFormater_1.UserFormater.beforeUpdate(req));
+        res.json({ status: 200, data: updatedUser });
     }
-    else {
-        if (req.query.email === "update") {
-            try {
-                const userEmailUpdated = await userServices_1.UserServices.updateEmail(userFormater_1.UserFormater.beforeEmailUpdate(req));
-                res.json({ status: 200, data: userEmailUpdated });
-            }
-            catch (error) {
-                console.log(error);
-                if (error instanceof appError_1.AppError)
-                    error.response(res);
-            }
-        }
-        else if (req.query.email === "validate") {
-        }
-        else if (req.query.friend === "add" || req.query.friend === "remove") {
-            try {
-                const { user, friend } = await userServices_1.UserServices.relation({
-                    ...userFormater_1.UserFormater.beforeHandlingRelation(req),
-                    type: req.query.friend,
-                });
-                res.json({ status: 200, data: { user, friend } });
-            }
-            catch (error) {
-                console.log(error);
-                if (error instanceof appError_1.AppError) {
-                    error.response(res);
-                }
-            }
-        }
+    catch (error) {
+        if (error instanceof appError_1.AppError)
+            error.response(res);
+    }
+};
+const updateEmail = async (req, res) => {
+    try {
+        const userEmailUpdated = await userServices_1.UserServices.updateEmail(userFormater_1.UserFormater.beforeEmailUpdate(req));
+        res.json({ status: 200, data: userEmailUpdated });
+    }
+    catch (error) {
+        if (error instanceof appError_1.AppError)
+            error.response(res);
     }
 };
 const deleteOneUser = async (req, res) => { };
@@ -100,9 +93,11 @@ const deleteUsers = async (req, res) => {
 const UserControllers = {
     getAllUsers,
     getOneUser,
+    getUserFriends,
     createOneUser,
-    updateOneUser,
     deleteOneUser,
     deleteUsers,
+    updateInformation,
+    updateEmail,
 };
 exports.default = UserControllers;

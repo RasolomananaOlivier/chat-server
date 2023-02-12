@@ -13,4 +13,4 @@ AuthRoutes.post(
   AuthControllers.login
 );
 
-module.exports = AuthRoutes;
+export default AuthRoutes;

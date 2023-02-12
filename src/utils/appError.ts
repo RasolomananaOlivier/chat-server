@@ -15,10 +15,12 @@ export class AppError extends Error {
   }
 
   response(res: Response) {
-    res.status(this.status).json({
-      status: this.status,
-      name: this.name,
-      error: this.message,
+    return res.status(this.status).json({
+      error: {
+        status: this.status,
+        name: this.name,
+        error: this.message,
+      },
     });
   }
 }

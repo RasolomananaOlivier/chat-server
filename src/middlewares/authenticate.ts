@@ -1,8 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 export const authenticate = (
   req: Request,
@@ -11,18 +8,21 @@ export const authenticate = (
 ) => {
   if (req.headers["x-access-token"]) {
     const token = req.headers["x-access-token"].toString().split(" ")[1];
-    jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
+    jwt.verify(token, process.env.SECRET_KEY!, (err, payload) => {
       if (err) {
         res.status(400).json({
-          error: err,
+          status: 400,
+          name: err.name,
+          message: err.message,
         });
+      } else {
+        next();
       }
-
-      next();
     });
   } else {
-    const err = new Error("x-access-token not found");
-    //
-    next(err.message);
+    res.status(400).json({
+      name: "x-access-token-error",
+      message: "x-access-token must be provided",
+    });
   }
 };

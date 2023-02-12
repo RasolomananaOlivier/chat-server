@@ -1,4 +1,5 @@
-import { Document, QueryOptions } from "mongoose";
+import { Document, isValidObjectId, QueryOptions } from "mongoose";
+import RequestModel from "../database/models/RequestModel";
 import UserModel, { IUser, IUserUpdate } from "../database/models/UserModel";
 import { AppError } from "../utils/appError";
 
@@ -20,17 +21,25 @@ const register = async (userData: IUser) => {
 };
 
 const findUserById = async (userId: string) => {
-  const foundUser = await UserModel.findById(userId);
+  if (isValidObjectId(userId)) {
+    const foundUser = await UserModel.findById(userId);
 
-  if (!foundUser) {
+    if (!foundUser) {
+      throw new AppError({
+        name: "UserNotFound",
+        message: `User with id ${userId} not found`,
+        status: 404,
+      });
+    }
+
+    return foundUser;
+  } else {
     throw new AppError({
-      name: "find one user by id",
-      message: `User with id ${userId} not found`,
-      status: 404,
+      status: 400,
+      name: "InvalidUserId",
+      message: `Failed to cast userId ${userId}`,
     });
   }
-
-  return foundUser;
 };
 
 const updatePersonalInformation = async (update: IUserUpdate) => {
@@ -65,71 +74,51 @@ const updateEmail = async ({
 }) => {
   const options: QueryOptions = { useFindAndModify: false, new: true };
 
-  const userEmailUpdated = await UserModel.findOneAndUpdate(
-    { _id: userId },
-    {
-      "email.address": email,
-    },
-    options
-  );
+  if (isValidObjectId(userId)) {
+    const userEmailUpdated = await UserModel.findOneAndUpdate(
+      { _id: userId },
+      {
+        "email.address": email,
+      },
+      options
+    );
 
-  if (!userEmailUpdated) {
+    if (!userEmailUpdated) {
+      throw new AppError({
+        name: "UserNorFound",
+        message: `User with id ${userId} not found`,
+        status: 404,
+      });
+    }
+
+    return userEmailUpdated;
+  } else {
     throw new AppError({
-      name: "update user email",
-      message: `User with id ${userId} not found`,
-      status: 404,
+      status: 400,
+      name: "InvalidUserId",
+      message: "UserId must be in objectId type",
     });
   }
-
-  return userEmailUpdated;
 };
 
-interface IFriendParams {
-  userId: string;
-  friendId: string;
-  type: "add" | "remove";
-}
-const relation = async ({ userId, friendId, type }: IFriendParams) => {
-  const user = await UserModel.findById(userId);
-  const friend = await UserModel.findById(friendId);
+const addFriend = async (userId: string, newFriendId: string) => {
+  if (isValidObjectId(userId) && isValidObjectId(newFriendId)) {
+    const user = await UserModel.findById(userId);
 
-  if (!user || !friend) {
-    throw new AppError({
-      name: "Add new friend error",
-      message: `User ${userId} or ${friendId} does not exist`,
-      status: 404,
-    });
-  }
-
-  // Check if the two users are already connected
-  const isConnected =
-    user.friends?.some((id) => id === friendId) ||
-    friend.friends?.some((id) => id === userId);
-
-  if (type === "add") {
+    const isConnected = user?.friends?.some((id) => id === newFriendId);
     if (isConnected) {
-      throw new AppError({
-        name: "Add new friend error",
-        message: `User ${userId} and ${friendId} are already connected`,
-        status: 400,
-      });
-    }
-    user.friends?.push(friendId);
-    friend.friends?.push(userId);
+      user?.friends?.push(newFriendId);
 
-    return { user: await user.save(), friend: await friend.save() };
+      return await user?.save();
+    } else {
+      console.log("Users already connected");
+    }
   } else {
-    if (!isConnected) {
-      throw new AppError({
-        name: "Remove friend error",
-        message: `User ${userId} and ${friendId} are already disconnected`,
-        status: 400,
-      });
-    }
-    user.friends = user.friends?.filter((id) => id !== friendId);
-    friend.friends = friend.friends?.filter((id) => id !== userId);
-
-    return { user: await user.save(), friend: await friend.save() };
+    throw new AppError({
+      status: 400,
+      name: "InvalidUserId",
+      message: "UserId or newFriendId must be in objectId type",
+    });
   }
 };
 
@@ -141,6 +130,6 @@ export const UserServices = {
   findUserById,
   updatePersonalInformation,
   updateEmail,
-  relation,
   deleteAllUsers,
+  addFriend,
 };

@@ -22,7 +22,7 @@ userSchema.pre("save", async function (next) {
     }
     next();
 });
-userSchema.methods.getFullName = function () {
+userSchema.methods.getFullname = function () {
     return `${this.firstname} ${this.lastname}`;
 };
 const UserModel = (0, mongoose_1.model)("User", userSchema);

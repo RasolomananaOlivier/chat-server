@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserServices = void 0;
+const mongoose_1 = require("mongoose");
 const UserModel_1 = __importDefault(require("../database/models/UserModel"));
 const appError_1 = require("../utils/appError");
 const register = async (userData) => {
@@ -21,15 +22,24 @@ const register = async (userData) => {
     return await user.save();
 };
 const findUserById = async (userId) => {
-    const foundUser = await UserModel_1.default.findById(userId);
-    if (!foundUser) {
+    if ((0, mongoose_1.isValidObjectId)(userId)) {
+        const foundUser = await UserModel_1.default.findById(userId);
+        if (!foundUser) {
+            throw new appError_1.AppError({
+                name: "UserNotFound",
+                message: `User with id ${userId} not found`,
+                status: 404,
+            });
+        }
+        return foundUser;
+    }
+    else {
         throw new appError_1.AppError({
-            name: "find one user by id",
-            message: `User with id ${userId} not found`,
-            status: 404,
+            status: 400,
+            name: "InvalidUserId",
+            message: `Failed to cast userId ${userId}`,
         });
     }
-    return foundUser;
 };
 const updatePersonalInformation = async (update) => {
     const options = { useFindAndModify: false, new: true };
@@ -48,54 +58,46 @@ const updatePersonalInformation = async (update) => {
 };
 const updateEmail = async ({ userId, email, }) => {
     const options = { useFindAndModify: false, new: true };
-    const userEmailUpdated = await UserModel_1.default.findOneAndUpdate({ _id: userId }, {
-        "email.address": email,
-    }, options);
-    if (!userEmailUpdated) {
-        throw new appError_1.AppError({
-            name: "update user email",
-            message: `User with id ${userId} not found`,
-            status: 404,
-        });
-    }
-    return userEmailUpdated;
-};
-const relation = async ({ userId, friendId, type }) => {
-    var _a, _b, _c, _d, _e, _f;
-    const user = await UserModel_1.default.findById(userId);
-    const friend = await UserModel_1.default.findById(friendId);
-    if (!user || !friend) {
-        throw new appError_1.AppError({
-            name: "Add new friend error",
-            message: `User ${userId} or ${friendId} does not exist`,
-            status: 404,
-        });
-    }
-    const isConnected = ((_a = user.friends) === null || _a === void 0 ? void 0 : _a.some((id) => id === friendId)) ||
-        ((_b = friend.friends) === null || _b === void 0 ? void 0 : _b.some((id) => id === userId));
-    if (type === "add") {
-        if (isConnected) {
+    if ((0, mongoose_1.isValidObjectId)(userId)) {
+        const userEmailUpdated = await UserModel_1.default.findOneAndUpdate({ _id: userId }, {
+            "email.address": email,
+        }, options);
+        if (!userEmailUpdated) {
             throw new appError_1.AppError({
-                name: "Add new friend error",
-                message: `User ${userId} and ${friendId} are already connected`,
-                status: 400,
+                name: "UserNorFound",
+                message: `User with id ${userId} not found`,
+                status: 404,
             });
         }
-        (_c = user.friends) === null || _c === void 0 ? void 0 : _c.push(friendId);
-        (_d = friend.friends) === null || _d === void 0 ? void 0 : _d.push(userId);
-        return { user: await user.save(), friend: await friend.save() };
+        return userEmailUpdated;
     }
     else {
-        if (!isConnected) {
-            throw new appError_1.AppError({
-                name: "Remove friend error",
-                message: `User ${userId} and ${friendId} are already disconnected`,
-                status: 400,
-            });
+        throw new appError_1.AppError({
+            status: 400,
+            name: "InvalidUserId",
+            message: "UserId must be in objectId type",
+        });
+    }
+};
+const addFriend = async (userId, newFriendId) => {
+    var _a, _b;
+    if ((0, mongoose_1.isValidObjectId)(userId) && (0, mongoose_1.isValidObjectId)(newFriendId)) {
+        const user = await UserModel_1.default.findById(userId);
+        const isConnected = (_a = user === null || user === void 0 ? void 0 : user.friends) === null || _a === void 0 ? void 0 : _a.some((id) => id === newFriendId);
+        if (isConnected) {
+            (_b = user === null || user === void 0 ? void 0 : user.friends) === null || _b === void 0 ? void 0 : _b.push(newFriendId);
+            return await (user === null || user === void 0 ? void 0 : user.save());
         }
-        user.friends = (_e = user.friends) === null || _e === void 0 ? void 0 : _e.filter((id) => id !== friendId);
-        friend.friends = (_f = friend.friends) === null || _f === void 0 ? void 0 : _f.filter((id) => id !== userId);
-        return { user: await user.save(), friend: await friend.save() };
+        else {
+            console.log("Users already connected");
+        }
+    }
+    else {
+        throw new appError_1.AppError({
+            status: 400,
+            name: "InvalidUserId",
+            message: "UserId or newFriendId must be in objectId type",
+        });
     }
 };
 const deleteAllUsers = async () => {
@@ -106,6 +108,6 @@ exports.UserServices = {
     findUserById,
     updatePersonalInformation,
     updateEmail,
-    relation,
     deleteAllUsers,
+    addFriend,
 };

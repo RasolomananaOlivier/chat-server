@@ -1,9 +1,11 @@
 "use strict";
-const express = require("express");
-const MessageControllers = require("../../controllers/messageControllers");
-const MessageRoutes = express.Router();
-MessageRoutes.get("/", MessageControllers.getAllMessages);
-MessageRoutes.get("/:messageId", MessageControllers.getOneMessage);
-MessageRoutes.put("/:messageId", MessageControllers.updateOneMessage);
-MessageRoutes.delete("/:messageId", MessageControllers.deleteOneMessage);
-module.exports = MessageRoutes;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const messageControllers_1 = __importDefault(require("../../controllers/messageControllers"));
+const MessageRoutes = express_1.default.Router();
+MessageRoutes.get("/", messageControllers_1.default.getAllMessages);
+MessageRoutes.get("/:messageId", messageControllers_1.default.getOneMessage);
+exports.default = MessageRoutes;
