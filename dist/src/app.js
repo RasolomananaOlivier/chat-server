@@ -17,6 +17,7 @@ const joinMessageRoom_1 = __importDefault(require("./middlewares/socket/joinMess
 const messageEvents_1 = __importDefault(require("./events/messageEvents"));
 const cors_1 = __importDefault(require("cors"));
 const requestRoutes_1 = __importDefault(require("./v1/routes/requestRoutes"));
+const notificationRoutes_1 = __importDefault(require("./v1/routes/notificationRoutes"));
 const app = (0, express_1.default)();
 (0, connect_1.default)();
 app.use(express_1.default.json());
@@ -26,8 +27,14 @@ app.use("/api/v1/users", userRoutes_1.default);
 app.use("/api/v1/messages", messageRoutes_1.default);
 app.use("/api/v1/auth", authRoutes_1.default);
 app.use("/api/v1/requests", requestRoutes_1.default);
+app.use("/api/v1/notifications", notificationRoutes_1.default);
 const httpServer = (0, node_http_1.createServer)(app);
-const io = new socket_io_1.Server(httpServer);
+const io = new socket_io_1.Server(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
+});
 io.use(joinPrivateRoom_1.default);
 io.use(joinMessageRoom_1.default);
 io.on("connection", (socket) => {

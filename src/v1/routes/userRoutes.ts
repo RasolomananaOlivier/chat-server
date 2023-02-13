@@ -4,9 +4,7 @@ import {
   userRegistrationRules,
   validateRegistration,
 } from "../../middlewares/validateRegistration";
-import { body } from "express-validator";
 import { authenticate } from "../../middlewares/authenticate";
-import { request } from "node:http";
 
 const UserRoutes = express.Router();
 
@@ -16,11 +14,18 @@ UserRoutes.get(
   "/:userId",
   authenticate,
   async (req: Request, res: Response) => {
-    // /v1/api/users/:userId?q=friends
-    if (req.query.q === "friends") {
-      await UserControllers.getUserFriends(req, res);
-    } else {
-      await UserControllers.getOneUser(req, res);
+    switch (req.query.q) {
+      case "friends":
+        // /v1/api/users/:userId?q=friends
+        await UserControllers.getUserFriends(req, res);
+        break;
+      case "suggestions":
+        // /v1/api/users/:userId?q=suggestions
+        await UserControllers.getSuggestions(req, res);
+        break;
+      default:
+        await UserControllers.getOneUser(req, res);
+        break;
     }
   }
 );

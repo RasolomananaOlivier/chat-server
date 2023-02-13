@@ -42,8 +42,6 @@ const findById = async (messageId: string) => {
 };
 
 const createOne = async (usersId: string[]) => {
-  console.log(usersId.length);
-
   if (usersId.length === 2) {
     try {
       const message = new MessageModel({

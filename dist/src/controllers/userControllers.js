@@ -90,6 +90,18 @@ const deleteUsers = async (req, res) => {
         console.log(error);
     }
 };
+const getSuggestions = async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const suggestions = await userServices_1.UserServices.getSuggestions(userId);
+        res.json({ suggestions });
+    }
+    catch (error) {
+        if (error instanceof appError_1.AppError) {
+            error.response(res);
+        }
+    }
+};
 const UserControllers = {
     getAllUsers,
     getOneUser,
@@ -99,5 +111,6 @@ const UserControllers = {
     deleteUsers,
     updateInformation,
     updateEmail,
+    getSuggestions,
 };
 exports.default = UserControllers;

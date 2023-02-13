@@ -105,6 +105,20 @@ const deleteUsers = async (req: Request, res: Response) => {
   }
 };
 
+const getSuggestions = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+
+  try {
+    const suggestions = await UserServices.getSuggestions(userId);
+
+    res.json({ suggestions });
+  } catch (error) {
+    if (error instanceof AppError) {
+      error.response(res);
+    }
+  }
+};
+
 const UserControllers = {
   getAllUsers,
   getOneUser,
@@ -114,6 +128,7 @@ const UserControllers = {
   deleteUsers,
   updateInformation,
   updateEmail,
+  getSuggestions,
 };
 
 export default UserControllers;

@@ -13,10 +13,9 @@ const creation = (io: Server, socket: Socket) => {
       originId,
     });
 
-    socket.emit(
-      "request:sent",
-      await RequestServices.findAllByOriginId(originId)
-    );
+    // To update suggestions list
+    // For originId
+    socket.emit("request:sent", await UserServices.getSuggestions(originId));
 
     // Send the new list of requests of the destinationId
     io.to(destinationId).emit(
@@ -51,6 +50,7 @@ const accept = (io: Server, socket: Socket) => {
       UserEvents.emit.update(io, destinationUpdated);
       UserEvents.emit.update(io, originUpdated);
 
+      // Notify the origin of the request
       NotificationEvents.emit.push(
         io,
         Utilities.stringify(originUpdated._id),

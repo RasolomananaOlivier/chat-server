@@ -15,7 +15,7 @@ const creation = (io, socket) => {
             destinationId,
             originId,
         });
-        socket.emit("request:sent", await RequestServices_1.default.findAllByOriginId(originId));
+        socket.emit("request:sent", await userServices_1.UserServices.getSuggestions(originId));
         io.to(destinationId).emit("request:listen", await RequestServices_1.default.findAllByDestinationId(destinationId));
     });
 };

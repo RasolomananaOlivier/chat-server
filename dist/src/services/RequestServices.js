@@ -40,12 +40,12 @@ const findAllByDestinationId = async (userId) => {
         const result = await RequestModel_1.default.find({ destinationId: userId });
         let requestsList = [];
         for (const request of result) {
-            const user = await userServices_1.UserServices.findUserById(request.destinationId);
+            const origin = await userServices_1.UserServices.findUserById(request.originId);
             requestsList.push({
                 _id: request._id,
-                userId: user._id,
-                email: user.email.address,
-                fullname: user.getFullname(),
+                userId: origin._id,
+                email: origin.email.address,
+                fullname: origin.getFullname(),
             });
         }
         return requestsList;
@@ -96,11 +96,28 @@ const deleteOne = async (requestId) => {
         });
     }
 };
+const isRequestExist = async (userId, testId) => {
+    const byDestination = await RequestModel_1.default.findOne({
+        destinationId: userId,
+        originId: testId,
+    });
+    const byOrigin = await RequestModel_1.default.findOne({
+        destinationId: testId,
+        originId: userId,
+    });
+    if (byDestination === null && byOrigin === null) {
+        return false;
+    }
+    else {
+        return true;
+    }
+};
 const RequestServices = {
     create,
     findAllByDestinationId,
     findAllByOriginId,
     findOne,
     deleteOne,
+    isRequestExist,
 };
 exports.default = RequestServices;

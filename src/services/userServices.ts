@@ -2,6 +2,7 @@ import { Document, isValidObjectId, QueryOptions } from "mongoose";
 import RequestModel from "../database/models/RequestModel";
 import UserModel, { IUser, IUserUpdate } from "../database/models/UserModel";
 import { AppError } from "../utils/appError";
+import RequestServices from "./RequestServices";
 
 const register = async (userData: IUser) => {
   const foundUser = await UserModel.findOne({
@@ -105,12 +106,14 @@ const addFriend = async (userId: string, newFriendId: string) => {
   if (isValidObjectId(userId) && isValidObjectId(newFriendId)) {
     const user = await UserModel.findById(userId);
 
-    const isConnected = user?.friends?.some((id) => id === newFriendId);
-    if (isConnected) {
+    const connected = user?.friends?.some((id) => id === newFriendId);
+
+    if (!connected) {
       user?.friends?.push(newFriendId);
 
       return await user?.save();
     } else {
+      // TODO: send an error to inform that the users are connected
       console.log("Users already connected");
     }
   } else {
@@ -125,6 +128,48 @@ const addFriend = async (userId: string, newFriendId: string) => {
 const deleteAllUsers = async () => {
   await UserModel.deleteMany({});
 };
+
+const getSuggestions = async (userId: string) => {
+  if (isValidObjectId(userId)) {
+    // Find all users except the one having userId as _id
+    const users = await UserModel.find().where("_id").ne(userId);
+
+    const filterUsers = users.filter((user) => {
+      const userFriends = user.friends;
+      if (userFriends) {
+        // Check if user has friends
+        if (userFriends.length > 0) {
+          // Check if user friends doesn't include user userId
+          if (userFriends.some((id) => id !== userId)) {
+            // Then the user is not friends with userId
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
+      }
+    });
+
+    const arrayPromise = filterUsers.map((user) =>
+      RequestServices.isRequestExist(userId, user._id)
+    );
+    const isRequestsCreated = await Promise.all(arrayPromise);
+    const suggestions = filterUsers.filter(
+      (user, index) => !isRequestsCreated[index]
+    );
+
+    return suggestions;
+  } else {
+    throw new AppError({
+      status: 400,
+      name: "InvalidUserId",
+      message: "UserId must be in objectId type",
+    });
+  }
+};
+
 export const UserServices = {
   register,
   findUserById,
@@ -132,4 +177,5 @@ export const UserServices = {
   updateEmail,
   deleteAllUsers,
   addFriend,
+  getSuggestions,
 };

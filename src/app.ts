@@ -13,6 +13,7 @@ import joinMessageRoom from "./middlewares/socket/joinMessageRoom";
 import MessageEvents from "./events/messageEvents";
 import cors from "cors";
 import RequestRoutes from "./v1/routes/requestRoutes";
+import NotificationRoutes from "./v1/routes/notificationRoutes";
 
 const app = express();
 
@@ -26,10 +27,16 @@ app.use("/api/v1/users", UserRoutes);
 app.use("/api/v1/messages", MessageRoutes);
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/requests", RequestRoutes);
+app.use("/api/v1/notifications", NotificationRoutes);
 
 const httpServer = createServer(app);
 
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 io.use(joinPrivateRoom);
 io.use(joinMessageRoom);

@@ -37,7 +37,6 @@ const findById = async (messageId) => {
     }
 };
 const createOne = async (usersId) => {
-    console.log(usersId.length);
     if (usersId.length === 2) {
         try {
             const message = new MessageModel_1.default({

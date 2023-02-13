@@ -10,11 +10,16 @@ const authenticate_1 = require("../../middlewares/authenticate");
 const UserRoutes = express_1.default.Router();
 UserRoutes.get("/", userControllers_1.default.getAllUsers);
 UserRoutes.get("/:userId", authenticate_1.authenticate, async (req, res) => {
-    if (req.query.q === "friends") {
-        await userControllers_1.default.getUserFriends(req, res);
-    }
-    else {
-        await userControllers_1.default.getOneUser(req, res);
+    switch (req.query.q) {
+        case "friends":
+            await userControllers_1.default.getUserFriends(req, res);
+            break;
+        case "suggestions":
+            await userControllers_1.default.getSuggestions(req, res);
+            break;
+        default:
+            await userControllers_1.default.getOneUser(req, res);
+            break;
     }
 });
 UserRoutes.post("/", (0, validateRegistration_1.userRegistrationRules)(), validateRegistration_1.validateRegistration, userControllers_1.default.createOneUser);
