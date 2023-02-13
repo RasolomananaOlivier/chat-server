@@ -2,6 +2,7 @@ import { isValidObjectId } from "mongoose";
 import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
 import MessageServices from "../../services/messageServices";
+import Utilities from "../../utils";
 
 const joinMessageRoom = async (
   socket: Socket,
@@ -13,7 +14,9 @@ const joinMessageRoom = async (
       userId as string
     );
 
-    messages.forEach((message) => socket.join(message.messageId));
+    messages.forEach((message) => {
+      socket.join(Utilities.stringify(message._id));
+    });
   }
   return next();
 };

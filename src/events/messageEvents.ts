@@ -5,6 +5,8 @@ import Utilities from "../utils";
 
 const push = (io: Server, socket: Socket) => {
   socket.on("message:push", async (messagePayload: IMessagePayload) => {
+    console.log(messagePayload.messageId);
+
     const message = await MessageServices.addNewMessageItem(messagePayload);
 
     if (message) {

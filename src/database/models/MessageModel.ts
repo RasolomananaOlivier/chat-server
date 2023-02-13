@@ -10,9 +10,10 @@ export interface IMessageItem {
 }
 
 export interface IMessage {
+  _id?: string;
   authorizedUser: string[];
   messages: IMessageItem[];
-  isRead: boolean;
+  readBy: string[];
 }
 
 const MessageSchema = new Schema<IMessage>({
@@ -27,7 +28,7 @@ const MessageSchema = new Schema<IMessage>({
       imageUrl: { type: String, require: false },
     },
   ],
-  isRead: Boolean,
+  readBy: [String],
 });
 
 const MessageModel = model<IMessage>("Message", MessageSchema);

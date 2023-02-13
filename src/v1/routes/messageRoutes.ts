@@ -4,7 +4,7 @@ const MessageRoutes = express.Router();
 
 MessageRoutes.get("/", MessageControllers.getAllMessages);
 
-MessageRoutes.get("/:messageId", MessageControllers.getOneMessage);
+MessageRoutes.get("/:messageId/:userId", MessageControllers.getOneMessage);
 
 // MessageRoutes.put("/:messageId", MessageControllers.updateOneMessage);
 

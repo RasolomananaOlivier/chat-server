@@ -16,10 +16,11 @@ const getAllMessages = async (req: Request, res: Response) => {
 };
 
 const getOneMessage = async (req: Request, res: Response) => {
-  const messageId = req.params.messageId;
+  const messageId = req.params.messageId,
+    userId = req.params.userId;
 
   try {
-    const message = await MessageServices.findById(messageId);
+    const message = await MessageServices.findById(messageId, userId);
 
     res.json(message);
   } catch (error) {

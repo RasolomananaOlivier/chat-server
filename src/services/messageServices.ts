@@ -1,4 +1,5 @@
 import { isValidObjectId } from "mongoose";
+import { log } from "node:console";
 import MessageModel, {
   IMessage,
   IMessageItem,
@@ -16,22 +17,30 @@ const findMessagesByUserId = async (userId: string): Promise<IMessage[]> => {
     _id: message._id,
     authorizedUser: message.authorizedUser,
     messages: [],
-    isRead: false,
+    readBy: message.readBy,
   }));
 };
 
-const findById = async (messageId: string) => {
+// Find the message and update the readBy property
+const findById = async (messageId: string, userId: string) => {
   if (isValidObjectId(messageId)) {
-    const messages = await MessageModel.findById(messageId);
+    const message = await MessageModel.findById(messageId);
 
-    if (messages === null) {
+    if (message === null) {
       throw new AppError({
         status: 404,
         name: "MessageNotFound",
         message: `The message with ${messageId} was not found`,
       });
+    } else {
+      if (message.readBy.length === 0) {
+        message.readBy = [userId];
+      } else {
+        message.readBy = [...new Set([...message.readBy, userId])];
+      }
+
+      return await message.save();
     }
-    return messages;
   } else {
     throw new AppError({
       status: 400,
@@ -47,7 +56,7 @@ const createOne = async (usersId: string[]) => {
       const message = new MessageModel({
         authorizedUser: usersId,
         messages: [],
-        isRead: false,
+        readBy: [],
       });
 
       return await message.save();
@@ -74,6 +83,8 @@ const addNewMessageItem = async ({
       console.log("Message not found");
     } else {
       message.messages.push(messageItem);
+      message.readBy = [messageItem.auth];
+
       return await message.save();
     }
   } else {

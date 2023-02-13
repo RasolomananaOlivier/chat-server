@@ -13,7 +13,7 @@ const MessageSchema = new mongoose_1.Schema({
             imageUrl: { type: String, require: false },
         },
     ],
-    isRead: Boolean,
+    readBy: [String],
 });
 const MessageModel = (0, mongoose_1.model)("Message", MessageSchema);
 exports.default = MessageModel;

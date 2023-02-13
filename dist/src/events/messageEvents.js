@@ -7,6 +7,7 @@ const messageServices_1 = __importDefault(require("../services/messageServices")
 const utils_1 = __importDefault(require("../utils"));
 const push = (io, socket) => {
     socket.on("message:push", async (messagePayload) => {
+        console.log(messagePayload.messageId);
         const message = await messageServices_1.default.addNewMessageItem(messagePayload);
         if (message) {
             io.to(utils_1.default.stringify(message._id)).emit("message:update", message);

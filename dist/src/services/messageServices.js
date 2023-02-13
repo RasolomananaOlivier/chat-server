@@ -13,20 +13,28 @@ const findMessagesByUserId = async (userId) => {
         _id: message._id,
         authorizedUser: message.authorizedUser,
         messages: [],
-        isRead: false,
+        readBy: message.readBy,
     }));
 };
-const findById = async (messageId) => {
+const findById = async (messageId, userId) => {
     if ((0, mongoose_1.isValidObjectId)(messageId)) {
-        const messages = await MessageModel_1.default.findById(messageId);
-        if (messages === null) {
+        const message = await MessageModel_1.default.findById(messageId);
+        if (message === null) {
             throw new appError_1.AppError({
                 status: 404,
                 name: "MessageNotFound",
                 message: `The message with ${messageId} was not found`,
             });
         }
-        return messages;
+        else {
+            if (message.readBy.length === 0) {
+                message.readBy = [userId];
+            }
+            else {
+                message.readBy = [...new Set([...message.readBy, userId])];
+            }
+            return await message.save();
+        }
     }
     else {
         throw new appError_1.AppError({
@@ -42,7 +50,7 @@ const createOne = async (usersId) => {
             const message = new MessageModel_1.default({
                 authorizedUser: usersId,
                 messages: [],
-                isRead: false,
+                readBy: [],
             });
             return await message.save();
         }
@@ -62,6 +70,7 @@ const addNewMessageItem = async ({ messageId, messageItem, }) => {
         }
         else {
             message.messages.push(messageItem);
+            message.readBy = [messageItem.auth];
             return await message.save();
         }
     }
