@@ -10,6 +10,7 @@ export interface IUserDocument extends Document {
   };
   password: string;
   friends?: string[];
+  avatarUrl: string;
 }
 
 export interface IUser extends IUserDocument {
@@ -23,6 +24,7 @@ export interface IUserPostRequest {
   email: string;
   password: string;
   friends?: string[];
+  avatarUrl: string;
 }
 
 export interface IUserUpdate extends IUser {
@@ -38,6 +40,7 @@ const userSchema = new Schema<IUser, IUserModel>({
   },
   password: { type: String, require: true },
   friends: [String],
+  avatarUrl: String,
 });
 
 // Hash the password before saving the user data

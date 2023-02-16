@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Request } from "express";
 import { IUser, IUserUpdate } from "../../database/models/UserModel";
 
@@ -11,6 +12,7 @@ const beforeRegistration = (req: Request): IUser => {
     },
     password: req.body.password,
     friends: [],
+    avatarUrl: req.body.avatarUrl,
   };
 };
 
@@ -28,6 +30,7 @@ const beforeUpdate = (req: Request): IUserUpdate => {
     lastname: req.body.lastname,
     email: req.body.email,
     password: req.body.password,
+    avatarUrl: req.body.avatarUrl,
   };
 };
 

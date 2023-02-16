@@ -11,6 +11,7 @@ const beforeRegistration = (req) => {
         },
         password: req.body.password,
         friends: [],
+        avatarUrl: req.body.avatarUrl,
     };
 };
 const beforeLogin = (req) => {
@@ -26,6 +27,7 @@ const beforeUpdate = (req) => {
         lastname: req.body.lastname,
         email: req.body.email,
         password: req.body.password,
+        avatarUrl: req.body.avatarUrl,
     };
 };
 const beforeEmailUpdate = (req) => {

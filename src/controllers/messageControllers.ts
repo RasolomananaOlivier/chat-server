@@ -30,24 +30,9 @@ const getOneMessage = async (req: Request, res: Response) => {
   }
 };
 
-// const createOneMessage = (req, res) => {
-//   return;
-// };
-
-// const updateOneMessage = (req, res) => {
-//   return;
-// };
-
-// const deleteOneMessage = (req, res) => {
-//   return;
-// };
-
 const MessageControllers = {
   getAllMessages,
   getOneMessage,
-  // createOneMessage,
-  // updateOneMessage,
-  // deleteOneMessage,
 };
 
 export default MessageControllers;
