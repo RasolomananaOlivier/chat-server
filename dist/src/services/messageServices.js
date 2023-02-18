@@ -16,7 +16,8 @@ const findMessagesByUserId = async (userId) => {
         readBy: message.readBy,
     }));
 };
-const findById = async (messageId, userId) => {
+const findById = async (messageId, userId, page = 1) => {
+    console.log(page);
     if ((0, mongoose_1.isValidObjectId)(messageId)) {
         const message = await MessageModel_1.default.findById(messageId);
         if (message === null) {
@@ -33,7 +34,16 @@ const findById = async (messageId, userId) => {
             else {
                 message.readBy = [...new Set([...message.readBy, userId])];
             }
-            return await message.save();
+            const savedMessage = await message.save();
+            return {
+                totalMessages: savedMessage.messages.length,
+                message: {
+                    _id: savedMessage._id,
+                    authorizedUser: savedMessage.authorizedUser,
+                    readBy: savedMessage.readBy,
+                    messages: savedMessage.messages.slice(-page * 15),
+                },
+            };
         }
     }
     else {

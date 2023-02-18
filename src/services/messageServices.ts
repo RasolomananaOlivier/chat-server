@@ -1,5 +1,4 @@
 import { isValidObjectId } from "mongoose";
-import { log } from "node:console";
 import MessageModel, {
   IMessage,
   IMessageItem,
@@ -22,7 +21,7 @@ const findMessagesByUserId = async (userId: string): Promise<IMessage[]> => {
 };
 
 // Find the message and update the readBy property
-const findById = async (messageId: string, userId: string) => {
+const findById = async (messageId: string, userId: string, page = 1) => {
   if (isValidObjectId(messageId)) {
     const message = await MessageModel.findById(messageId);
 
@@ -39,7 +38,19 @@ const findById = async (messageId: string, userId: string) => {
         message.readBy = [...new Set([...message.readBy, userId])];
       }
 
-      return await message.save();
+      const savedMessage = await message.save();
+
+      return {
+        totalMessages: savedMessage.messages.length,
+        message: {
+          _id: savedMessage._id,
+          authorizedUser: savedMessage.authorizedUser,
+          readBy: savedMessage.readBy,
+          // Pagenate the message items from 0 to page * 10.
+          // ex : page = 2 => messages = [msg1, msg2, ..., msg10]
+          messages: savedMessage.messages.slice(-page * 15),
+        },
+      };
     }
   } else {
     throw new AppError({

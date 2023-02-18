@@ -17,9 +17,10 @@ const getAllMessages = async (req, res) => {
 };
 const getOneMessage = async (req, res) => {
     const messageId = req.params.messageId, userId = req.params.userId;
+    const page = +req.query.page;
     try {
-        const message = await messageServices_1.default.findById(messageId, userId);
-        res.json(message);
+        const result = await messageServices_1.default.findById(messageId, userId, page);
+        res.json(result);
     }
     catch (error) {
         if (error instanceof appError_1.AppError) {
