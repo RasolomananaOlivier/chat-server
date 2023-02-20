@@ -104,6 +104,18 @@ const getSuggestions = async (req, res) => {
         }
     }
 };
+const isEmailExist = async (req, res) => {
+    const email = req.body.email;
+    try {
+        await userServices_1.UserServices.isEmailExist(email);
+        res.json();
+    }
+    catch (error) {
+        if (error instanceof appError_1.AppError) {
+            error.response(res);
+        }
+    }
+};
 const UserControllers = {
     getAllUsers,
     getOneUser,
