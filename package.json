@@ -27,7 +27,8 @@
   "scripts": {
     "test": "jest --coverage --watch --detectOpenHandles --verbose",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/src/server.js\"",
-    "postinstall": "npx tsc"
+    "build": "npx tsc",
+    "start": "node dist/src/server.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
