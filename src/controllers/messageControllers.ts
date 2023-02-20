@@ -30,9 +30,24 @@ const getOneMessage = async (req: Request, res: Response) => {
   }
 };
 
+const getLastMessage = async (req: Request, res: Response) => {
+  const messageId = req.params.messageId;
+
+  try {
+    const lastMessage = await MessageServices.getLastMessage(messageId);
+
+    res.json(lastMessage);
+  } catch (error) {
+    if (error instanceof AppError) {
+      error.response(res);
+    }
+  }
+};
+
 const MessageControllers = {
   getAllMessages,
   getOneMessage,
+  getLastMessage,
 };
 
 export default MessageControllers;

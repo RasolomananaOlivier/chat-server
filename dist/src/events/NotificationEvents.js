@@ -11,6 +11,7 @@ const push = async (io, originId, destinationId) => {
     const data = {
         message: `${userDestinationName} accepted your request`,
         destinationId: originId,
+        isRead: false,
     };
     await notificationServices_1.default.create(data);
     const notifications = await notificationServices_1.default.getAllByDestinationId(originId);

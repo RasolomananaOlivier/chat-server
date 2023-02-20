@@ -103,11 +103,27 @@ const addNewMessageItem = async ({
   }
 };
 
+const getLastMessage = async (messageId: string) => {
+  if (isValidObjectId(messageId)) {
+    const message = await MessageModel.findById(messageId);
+    if (message !== null) {
+      const lastMessage = message.messages[message.messages.length];
+
+      return lastMessage;
+    } else {
+      console.log("message not found");
+    }
+  } else {
+    console.log("InvalidMessageId");
+  }
+};
+
 const MessageServices = {
   findMessagesByUserId,
   findById,
   createOne,
   addNewMessageItem,
+  getLastMessage,
 };
 
 export default MessageServices;

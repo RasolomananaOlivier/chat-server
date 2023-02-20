@@ -22,6 +22,7 @@ describe("User routes", () => {
                 firstname: "testname",
                 lastname: "testlastname",
                 password: "123456789",
+                avatarUrl: "",
             };
             const { status } = await (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/users")
@@ -34,6 +35,7 @@ describe("User routes", () => {
                 firstname: "testname",
                 lastname: "testlastname",
                 password: "123456789",
+                avatarUrl: "",
             };
             const { status } = await (0, supertest_1.default)(app_1.default)
                 .post("/api/v1/users")

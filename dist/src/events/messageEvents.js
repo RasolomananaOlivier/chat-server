@@ -7,10 +7,17 @@ const messageServices_1 = __importDefault(require("../services/messageServices")
 const utils_1 = __importDefault(require("../utils"));
 const push = (io, socket) => {
     socket.on("message:push", async (messagePayload) => {
-        console.log(messagePayload.messageId);
         const message = await messageServices_1.default.addNewMessageItem(messagePayload);
         if (message) {
-            io.to(utils_1.default.stringify(message._id)).emit("message:update", message);
+            const totalMessages = message === null || message === void 0 ? void 0 : message.messages.length;
+            const messageClient = {
+                _id: message._id,
+                authorizedUser: message.authorizedUser,
+                messages: message.messages.slice(-15),
+                readBy: message.readBy,
+                totalMessages,
+            };
+            io.to(utils_1.default.stringify(message._id)).emit("message:update", messageClient);
         }
     });
 };

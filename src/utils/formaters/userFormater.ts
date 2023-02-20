@@ -25,12 +25,12 @@ const beforeLogin = (req: Request) => {
 
 const beforeUpdate = (req: Request): IUserUpdate => {
   return {
-    userId: req.params.userId,
+    _id: req.params.userId,
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     email: req.body.email,
-    password: req.body.password,
     avatarUrl: req.body.avatarUrl,
+    birthday: req.body.birthday,
   };
 };
 

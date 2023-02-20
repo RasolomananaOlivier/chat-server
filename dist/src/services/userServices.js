@@ -8,6 +8,18 @@ const mongoose_1 = require("mongoose");
 const UserModel_1 = __importDefault(require("../database/models/UserModel"));
 const appError_1 = require("../utils/appError");
 const RequestServices_1 = __importDefault(require("./RequestServices"));
+const isEmailExist = async (email) => {
+    const foundUser = await UserModel_1.default.findOne({
+        "email.address": email,
+    });
+    if (foundUser !== null) {
+        throw new appError_1.AppError({
+            name: "RegistrationError",
+            message: "User with the same email already exist",
+            status: 400,
+        });
+    }
+};
 const register = async (userData) => {
     const foundUser = await UserModel_1.default.findOne({
         "email.address": userData.email.address,
@@ -16,7 +28,7 @@ const register = async (userData) => {
         throw new appError_1.AppError({
             name: "Registration error",
             message: "User with the same email already exist",
-            status: 404,
+            status: 400,
         });
     }
     const user = new UserModel_1.default(userData);
@@ -44,9 +56,12 @@ const findUserById = async (userId) => {
 };
 const updatePersonalInformation = async (update) => {
     const options = { useFindAndModify: false, new: true };
-    const updatedUser = await UserModel_1.default.findOneAndUpdate({ _id: update.userId }, {
+    const updatedUser = await UserModel_1.default.findOneAndUpdate({ _id: update._id }, {
         firstname: update.firstname,
         lastname: update.lastname,
+        avatarUrl: update.avatarUrl,
+        email: update.email,
+        birthday: update.birthday,
     }, options);
     if (!updatedUser) {
         throw new appError_1.AppError({
@@ -137,6 +152,7 @@ const getSuggestions = async (userId) => {
     }
 };
 exports.UserServices = {
+    isEmailExist,
     register,
     findUserById,
     updatePersonalInformation,

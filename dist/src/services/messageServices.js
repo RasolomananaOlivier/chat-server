@@ -17,7 +17,6 @@ const findMessagesByUserId = async (userId) => {
     }));
 };
 const findById = async (messageId, userId, page = 1) => {
-    console.log(page);
     if ((0, mongoose_1.isValidObjectId)(messageId)) {
         const message = await MessageModel_1.default.findById(messageId);
         if (message === null) {
@@ -88,10 +87,26 @@ const addNewMessageItem = async ({ messageId, messageItem, }) => {
         console.log("InvalidMessageId");
     }
 };
+const getLastMessage = async (messageId) => {
+    if ((0, mongoose_1.isValidObjectId)(messageId)) {
+        const message = await MessageModel_1.default.findById(messageId);
+        if (message !== null) {
+            const lastMessage = message.messages[message.messages.length];
+            return lastMessage;
+        }
+        else {
+            console.log("message not found");
+        }
+    }
+    else {
+        console.log("InvalidMessageId");
+    }
+};
 const MessageServices = {
     findMessagesByUserId,
     findById,
     createOne,
     addNewMessageItem,
+    getLastMessage,
 };
 exports.default = MessageServices;

@@ -15,6 +15,7 @@ const userSchema = new mongoose_1.Schema({
     password: { type: String, require: true },
     friends: [String],
     avatarUrl: String,
+    birthday: String,
 });
 userSchema.pre("save", async function (next) {
     const user = this;

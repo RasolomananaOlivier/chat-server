@@ -22,12 +22,12 @@ const beforeLogin = (req) => {
 };
 const beforeUpdate = (req) => {
     return {
-        userId: req.params.userId,
+        _id: req.params.userId,
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         email: req.body.email,
-        password: req.body.password,
         avatarUrl: req.body.avatarUrl,
+        birthday: req.body.birthday,
     };
 };
 const beforeEmailUpdate = (req) => {

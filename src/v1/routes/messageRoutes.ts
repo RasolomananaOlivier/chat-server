@@ -6,8 +6,9 @@ MessageRoutes.get("/", MessageControllers.getAllMessages);
 
 MessageRoutes.get("/:messageId/:userId", MessageControllers.getOneMessage);
 
-// MessageRoutes.put("/:messageId", MessageControllers.updateOneMessage);
-
-// MessageRoutes.delete("/:messageId", MessageControllers.deleteOneMessage);
+MessageRoutes.get(
+  "/:messageId?q=lastmessage",
+  MessageControllers.getOneMessage
+);
 
 export default MessageRoutes;

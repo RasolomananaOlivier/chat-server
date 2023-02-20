@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const DATABASE =
-  process.env.DATABASE_URI || "mongodb://localhost:27017/chatapp";
+  process.env.DATABASE_URI || "mongodb://localhost:27017/quicktalks";
 
 const dbConnection = () => {
   mongoose

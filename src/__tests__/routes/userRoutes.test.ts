@@ -20,6 +20,7 @@ describe("User routes", () => {
         firstname: "testname",
         lastname: "testlastname",
         password: "123456789",
+        avatarUrl: "",
       };
 
       const { status } = await supertest(httpServer)
@@ -34,6 +35,7 @@ describe("User routes", () => {
         firstname: "testname",
         lastname: "testlastname",
         password: "123456789",
+        avatarUrl: "",
       };
 
       const { status } = await supertest(httpServer)

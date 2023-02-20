@@ -23,10 +23,7 @@ const login = async (req, res) => {
     }
     catch (error) {
         if (error instanceof appError_1.AppError)
-            res.status(400).json({
-                status: 400,
-                error: error.message,
-            });
+            error.response(res);
     }
 };
 exports.AuthControllers = { login };

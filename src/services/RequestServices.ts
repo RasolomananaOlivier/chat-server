@@ -36,6 +36,7 @@ const create = async ({ destinationId, originId }: ICreateRequestParams) => {
       destinationId,
       originId,
       message: `${origin.firstname} ${origin.lastname} want to connect with you`,
+      read: false,
     });
 
     const savedRequest = await request.save();

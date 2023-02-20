@@ -2,10 +2,10 @@
   "name": "express",
   "version": "1.0.0",
   "description": "server",
-  "main": "dist/index.js",
+  "main": "dist/src/server.js",
   "engines": {
     "node": "16.x",
-    "npm": "6.14.x",
+    "npm": "8.x",
     "yarn": "1.22.x"
   },
   "author": "olivier",
@@ -26,7 +26,8 @@
   },
   "scripts": {
     "test": "jest --coverage --watch --detectOpenHandles --verbose",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/src/server.js\""
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/src/server.js\"",
+    "postinstall": "npx tsc"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

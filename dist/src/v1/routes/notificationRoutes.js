@@ -7,4 +7,6 @@ const express_1 = require("express");
 const notificationController_1 = __importDefault(require("../../controllers/notificationController"));
 const NotificationRoutes = (0, express_1.Router)();
 NotificationRoutes.get("/:userId", notificationController_1.default.getAll);
+NotificationRoutes.put("/", notificationController_1.default.markAllAsRead);
+NotificationRoutes.put("/:notificationId", notificationController_1.default.markAsRead);
 exports.default = NotificationRoutes;

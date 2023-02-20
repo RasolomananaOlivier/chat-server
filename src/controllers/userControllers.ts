@@ -47,6 +47,8 @@ const getUserFriends = async (req: Request, res: Response) => {
 
 const createOneUser = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
+
     const userSaved = await UserServices.register(
       UserFormater.beforeRegistration(req)
     );
@@ -56,6 +58,7 @@ const createOneUser = async (req: Request, res: Response) => {
       lastname: userSaved.lastname,
     });
 
+    console.log(userSaved);
     res.status(201).json({
       data: userSaved,
       token: `bearer ${token}`,
@@ -74,7 +77,7 @@ const updateInformation = async (req: Request, res: Response) => {
       UserFormater.beforeUpdate(req)
     );
 
-    res.json({ status: 200, data: updatedUser });
+    res.json(updatedUser);
   } catch (error) {
     if (error instanceof AppError) error.response(res);
   }
@@ -112,6 +115,19 @@ const getSuggestions = async (req: Request, res: Response) => {
     const suggestions = await UserServices.getSuggestions(userId);
 
     res.json({ suggestions });
+  } catch (error) {
+    if (error instanceof AppError) {
+      error.response(res);
+    }
+  }
+};
+
+const isEmailExist = async (req: Request, res: Response) => {
+  const email = req.body.email;
+  try {
+    await UserServices.isEmailExist(email);
+
+    res.json();
   } catch (error) {
     if (error instanceof AppError) {
       error.response(res);

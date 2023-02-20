@@ -14,6 +14,7 @@ const push = async (io: Server, originId: string, destinationId: string) => {
     message: `${userDestinationName} accepted your request`,
     // This notification is destinated to the origin
     destinationId: originId,
+    isRead: false,
   };
 
   await NotificationServices.create(data);

@@ -44,12 +44,14 @@ const getUserFriends = async (req, res) => {
 };
 const createOneUser = async (req, res) => {
     try {
+        console.log(req.body);
         const userSaved = await userServices_1.UserServices.register(userFormater_1.UserFormater.beforeRegistration(req));
         const token = (0, createToken_1.createToken)({
             userId: userSaved._id,
             firstname: userSaved.firstname,
             lastname: userSaved.lastname,
         });
+        console.log(userSaved);
         res.status(201).json({
             data: userSaved,
             token: `bearer ${token}`,
@@ -63,7 +65,7 @@ const createOneUser = async (req, res) => {
 const updateInformation = async (req, res) => {
     try {
         const updatedUser = await userServices_1.UserServices.updatePersonalInformation(userFormater_1.UserFormater.beforeUpdate(req));
-        res.json({ status: 200, data: updatedUser });
+        res.json(updatedUser);
     }
     catch (error) {
         if (error instanceof appError_1.AppError)

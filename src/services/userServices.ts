@@ -4,6 +4,19 @@ import UserModel, { IUser, IUserUpdate } from "../database/models/UserModel";
 import { AppError } from "../utils/appError";
 import RequestServices from "./RequestServices";
 
+const isEmailExist = async (email: string) => {
+  const foundUser = await UserModel.findOne({
+    "email.address": email,
+  });
+
+  if (foundUser !== null) {
+    throw new AppError({
+      name: "RegistrationError",
+      message: "User with the same email already exist",
+      status: 400,
+    });
+  }
+};
 const register = async (userData: IUser) => {
   const foundUser = await UserModel.findOne({
     "email.address": userData.email.address,
@@ -13,7 +26,7 @@ const register = async (userData: IUser) => {
     throw new AppError({
       name: "Registration error",
       message: "User with the same email already exist",
-      status: 404,
+      status: 400,
     });
   }
 
@@ -47,10 +60,13 @@ const updatePersonalInformation = async (update: IUserUpdate) => {
   const options: QueryOptions = { useFindAndModify: false, new: true };
 
   const updatedUser = await UserModel.findOneAndUpdate(
-    { _id: update.userId },
+    { _id: update._id },
     {
       firstname: update.firstname,
       lastname: update.lastname,
+      avatarUrl: update.avatarUrl,
+      email: update.email,
+      birthday: update.birthday,
     },
     options
   );
@@ -171,6 +187,7 @@ const getSuggestions = async (userId: string) => {
 };
 
 export const UserServices = {
+  isEmailExist,
   register,
   findUserById,
   updatePersonalInformation,

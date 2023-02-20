@@ -7,7 +7,6 @@ const notificationServices_1 = __importDefault(require("../services/notification
 const appError_1 = require("../utils/appError");
 const getAll = async (req, res) => {
     const userId = req.params.userId;
-    console.log(userId);
     try {
         const notifications = await notificationServices_1.default.getAllByDestinationId(userId);
         res.json(notifications);
@@ -18,7 +17,33 @@ const getAll = async (req, res) => {
         }
     }
 };
+const markAsRead = async (req, res) => {
+    const notificationId = req.params.notificationId;
+    try {
+        const notifications = await notificationServices_1.default.markAsRead(notificationId);
+        res.json(notifications);
+    }
+    catch (error) {
+        if (error instanceof appError_1.AppError) {
+            error.response(res);
+        }
+    }
+};
+const markAllAsRead = async (req, res) => {
+    const destinationId = req.query.destinationId;
+    try {
+        const notifications = await notificationServices_1.default.markAllAsRead(destinationId);
+        res.json(notifications);
+    }
+    catch (error) {
+        if (error instanceof appError_1.AppError) {
+            error.response(res);
+        }
+    }
+};
 const NotificationController = {
     getAll,
+    markAsRead,
+    markAllAsRead,
 };
 exports.default = NotificationController;
