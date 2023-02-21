@@ -11,7 +11,7 @@ export const authenticate = (
     jwt.verify(token, process.env.SECRET_KEY!, (err, payload) => {
       if (err) {
         res.status(400).json({
-          status: 400,
+          status: 401,
           name: err.name,
           message: err.message,
         });

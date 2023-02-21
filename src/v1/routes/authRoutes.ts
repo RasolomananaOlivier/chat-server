@@ -13,4 +13,6 @@ AuthRoutes.post(
   AuthControllers.login
 );
 
+AuthRoutes.post("/authenticate", AuthControllers.authenticate);
+
 export default AuthRoutes;

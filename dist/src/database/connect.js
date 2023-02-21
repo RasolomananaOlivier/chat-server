@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const dbConnection = () => {
     const DATABASE = process.env.DATABASE_URI || "mongodb://localhost:27017/quicktalks";
     console.log("====================================");
-    console.log(process.env.DATABASE_URI);
+    console.log(DATABASE, process.env.DATABASE_URI);
     console.log("====================================");
     mongoose
         .connect(DATABASE, {

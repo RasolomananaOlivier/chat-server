@@ -58,7 +58,6 @@ const createOneUser = async (req: Request, res: Response) => {
       lastname: userSaved.lastname,
     });
 
-    console.log(userSaved);
     res.status(201).json({
       data: userSaved,
       token: `bearer ${token}`,

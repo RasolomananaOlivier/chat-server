@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import AuthServices from "../services/authServices";
 import { AppError } from "../utils/appError";
-import { createToken } from "../utils/createToken";
+import { createToken, IPayload } from "../utils/createToken";
 import { UserFormater } from "../utils/formaters/userFormater";
+import jwt from "jsonwebtoken";
+import { UserServices } from "../services/userServices";
 
 const login = async (req: Request, res: Response) => {
   try {
@@ -23,4 +25,28 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-export const AuthControllers = { login };
+const authenticate = (req: Request, res: Response) => {
+  if (req.headers["x-access-token"]) {
+    const token = req.headers["x-access-token"].toString().split(" ")[1];
+    jwt.verify(token, process.env.SECRET_KEY!, async (err, jwtPayload) => {
+      if (err) {
+        res.status(400).json({
+          status: 401,
+          name: err.name,
+          message: err.message,
+        });
+      } else {
+        const payload = jwtPayload as IPayload;
+        const user = await UserServices.findUserById(payload.userId);
+        res.json({ user });
+      }
+    });
+  } else {
+    res.status(400).json({
+      name: "x-access-token-error",
+      message: "x-access-token must be provided",
+    });
+  }
+};
+
+export const AuthControllers = { login, authenticate };
