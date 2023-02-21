@@ -91,7 +91,7 @@ const getLastMessage = async (messageId) => {
     if ((0, mongoose_1.isValidObjectId)(messageId)) {
         const message = await MessageModel_1.default.findById(messageId);
         if (message !== null) {
-            const lastMessage = message.messages[message.messages.length];
+            const lastMessage = message.messages[message.messages.length - 1];
             return lastMessage;
         }
         else {

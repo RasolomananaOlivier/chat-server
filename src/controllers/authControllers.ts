@@ -38,7 +38,7 @@ const authenticate = (req: Request, res: Response) => {
       } else {
         const payload = jwtPayload as IPayload;
         const user = await UserServices.findUserById(payload.userId);
-        res.json({ user });
+        res.json(user);
       }
     });
   } else {

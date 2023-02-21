@@ -8,5 +8,5 @@ const messageControllers_1 = __importDefault(require("../../controllers/messageC
 const MessageRoutes = express_1.default.Router();
 MessageRoutes.get("/", messageControllers_1.default.getAllMessages);
 MessageRoutes.get("/:messageId/:userId", messageControllers_1.default.getOneMessage);
-MessageRoutes.get("/:messageId?q=lastmessage", messageControllers_1.default.getOneMessage);
+MessageRoutes.get("/:messageId", messageControllers_1.default.getLastMessage);
 exports.default = MessageRoutes;

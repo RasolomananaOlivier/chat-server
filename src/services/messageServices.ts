@@ -107,7 +107,7 @@ const getLastMessage = async (messageId: string) => {
   if (isValidObjectId(messageId)) {
     const message = await MessageModel.findById(messageId);
     if (message !== null) {
-      const lastMessage = message.messages[message.messages.length];
+      const lastMessage = message.messages[message.messages.length - 1];
 
       return lastMessage;
     } else {

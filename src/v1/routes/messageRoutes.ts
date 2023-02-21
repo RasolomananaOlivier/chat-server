@@ -6,9 +6,6 @@ MessageRoutes.get("/", MessageControllers.getAllMessages);
 
 MessageRoutes.get("/:messageId/:userId", MessageControllers.getOneMessage);
 
-MessageRoutes.get(
-  "/:messageId?q=lastmessage",
-  MessageControllers.getOneMessage
-);
+MessageRoutes.get("/:messageId", MessageControllers.getLastMessage);
 
 export default MessageRoutes;
