@@ -28,6 +28,7 @@ const login = async (req: Request, res: Response) => {
 const authenticate = (req: Request, res: Response) => {
   if (req.headers["x-access-token"]) {
     const token = req.headers["x-access-token"].toString().split(" ")[1];
+
     jwt.verify(token, process.env.SECRET_KEY!, async (err, jwtPayload) => {
       if (err) {
         res.status(400).json({
@@ -37,8 +38,13 @@ const authenticate = (req: Request, res: Response) => {
         });
       } else {
         const payload = jwtPayload as IPayload;
-        const user = await UserServices.findUserById(payload.userId);
-        res.json(user);
+
+        try {
+          const user = await UserServices.findUserById(payload.userId);
+          res.json(user);
+        } catch (error) {
+          if (error instanceof AppError) error.response(res);
+        }
       }
     });
   } else {
