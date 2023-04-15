@@ -47,8 +47,6 @@ const getUserFriends = async (req: Request, res: Response) => {
 
 const createOneUser = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
-
     const userSaved = await UserServices.register(
       UserFormater.beforeRegistration(req)
     );
@@ -134,6 +132,24 @@ const isEmailExist = async (req: Request, res: Response) => {
   }
 };
 
+const updatePassword = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const oldpassword = req.body.oldpassword;
+  const newpassword = req.body.newpassword;
+  try {
+    await UserServices.updatePassword(userId, oldpassword, newpassword);
+
+    res.json({
+      status: "success",
+      message: "password updated successfully",
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      error.response(res);
+    }
+  }
+};
+
 const UserControllers = {
   getAllUsers,
   getOneUser,
@@ -144,6 +160,7 @@ const UserControllers = {
   updateInformation,
   updateEmail,
   getSuggestions,
+  updatePassword,
 };
 
 export default UserControllers;

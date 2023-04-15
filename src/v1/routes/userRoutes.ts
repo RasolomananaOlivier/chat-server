@@ -37,37 +37,47 @@ UserRoutes.post(
   UserControllers.createOneUser
 );
 
-UserRoutes.put("/:userId", async (req: Request, res: Response) => {
-  if (Object.keys(req.query).length === 0) {
-    // No queries => Update user info
-    await UserControllers.updateInformation(req, res);
-  } else {
-    if (req.query.email) {
-      switch (req.query.email) {
-        case "update":
-          UserControllers.updateEmail(req, res);
-          break;
-        case "validate":
-          // validate email
-          break;
-        default:
-          break;
-      }
-    } else if (req.query.friend) {
-      switch (req.query.friend) {
-        case "add":
-          // add friend
-          // UserControllers.addFriend(req, res);
-          break;
-        case "remove":
-          // remove friend
-          break;
-        default:
-          break;
+UserRoutes.put(
+  "/:userId",
+  authenticate,
+  async (req: Request, res: Response) => {
+    if (Object.keys(req.query).length === 0) {
+      // No queries => Update user info
+      await UserControllers.updateInformation(req, res);
+    } else {
+      if (req.query.email) {
+        switch (req.query.email) {
+          case "update":
+            UserControllers.updateEmail(req, res);
+            break;
+          case "validate":
+            // validate email
+            break;
+          default:
+            break;
+        }
+      } else if (req.query.friend) {
+        switch (req.query.friend) {
+          case "add":
+            // add friend
+            // UserControllers.addFriend(req, res);
+            break;
+          case "remove":
+            // remove friend
+            break;
+          default:
+            break;
+        }
       }
     }
   }
-});
+);
+
+UserRoutes.put(
+  "/:userId/password",
+  authenticate,
+  UserControllers.updatePassword
+);
 
 UserRoutes.delete("/", UserControllers.deleteUsers);
 

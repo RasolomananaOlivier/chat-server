@@ -2,6 +2,7 @@ import { Document, isValidObjectId, QueryOptions } from "mongoose";
 import RequestModel from "../database/models/RequestModel";
 import UserModel, { IUser, IUserUpdate } from "../database/models/UserModel";
 import { AppError } from "../utils/appError";
+import bcrypt from "bcrypt";
 import RequestServices from "./RequestServices";
 
 const isEmailExist = async (email: string) => {
@@ -65,7 +66,7 @@ const updatePersonalInformation = async (update: IUserUpdate) => {
       firstname: update.firstname,
       lastname: update.lastname,
       avatarUrl: update.avatarUrl,
-      email: update.email,
+      "email.address": update.email,
       birthday: update.birthday,
     },
     options
@@ -186,6 +187,43 @@ const getSuggestions = async (userId: string) => {
   }
 };
 
+const updatePassword = async (
+  userId: string,
+  oldpassword: string,
+  newpassword: string
+) => {
+  if (isValidObjectId(userId)) {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new AppError({
+        status: 404,
+        name: "UserNotFound",
+        message: `User with password ${oldpassword} and id ${userId} cannot be found`,
+      });
+    }
+
+    const isCorrect = await bcrypt.compare(oldpassword, user.password);
+
+    if (!isCorrect) {
+      throw new AppError({
+        status: 422,
+        name: "WrongOldPassword",
+        message: `The old password you have provide is wrong`,
+      });
+    } else {
+      user.password = newpassword;
+      await user.save();
+    }
+  } else {
+    throw new AppError({
+      status: 422,
+      name: "InvalidUserId",
+      message: "UserId must be in objectId type",
+    });
+  }
+};
+
 export const UserServices = {
   isEmailExist,
   register,
@@ -195,4 +233,5 @@ export const UserServices = {
   deleteAllUsers,
   addFriend,
   getSuggestions,
+  updatePassword,
 };
