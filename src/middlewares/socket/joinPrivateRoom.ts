@@ -6,9 +6,10 @@ const joinPrivateRoom = async (
   next: (err?: ExtendedError | undefined) => void
 ) => {
   const userId = socket.handshake.headers.id;
+  console.log("userId", userId);
 
   if (userId) {
-    socket.join(userId);
+    socket.join(`${userId}`);
   }
   return next();
 };

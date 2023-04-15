@@ -13,9 +13,11 @@ const creation = (io: Server, socket: Socket) => {
       originId,
     });
 
-    // To update suggestions list
-    // For originId
-    socket.emit("request:sent", await UserServices.getSuggestions(originId));
+    // To update suggestions list For originId
+    io.to(originId).emit(
+      "request:sent",
+      await UserServices.getSuggestions(originId)
+    );
 
     // Send the new list of requests of the destinationId
     io.to(destinationId).emit(

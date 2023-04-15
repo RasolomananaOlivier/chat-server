@@ -118,12 +118,67 @@ const getLastMessage = async (messageId: string) => {
   }
 };
 
+const findByIdAndByType = async (
+  messageId: string,
+  userId: string,
+  type = "text"
+) => {
+  if (isValidObjectId(messageId)) {
+    const message = await MessageModel.findById(messageId);
+
+    if (message === null) {
+      throw new AppError({
+        status: 404,
+        name: "MessageNotFound",
+        message: `The message with ${messageId} was not found`,
+      });
+    } else {
+      if (message.readBy.length === 0) {
+        message.readBy = [userId];
+      } else {
+        message.readBy = [...new Set([...message.readBy, userId])];
+      }
+
+      const savedMessage = await message.save();
+
+      const filterOption = (type: string) => {
+        if (type === "text") {
+          return ["text"];
+        } else if (type === "media") {
+          return ["image", ["video"]];
+        } else {
+          return ["file"];
+        }
+      };
+      const filteredMessage = savedMessage.messages.filter((message) =>
+        filterOption(type).includes(message.type)
+      );
+
+      return {
+        message: {
+          _id: savedMessage._id,
+          authorizedUser: savedMessage.authorizedUser,
+          readBy: savedMessage.readBy,
+          messages: filteredMessage,
+        },
+      };
+    }
+  } else {
+    throw new AppError({
+      status: 400,
+      name: "InvalidMessageId",
+      message: "The messageId is not a valid",
+    });
+  }
+};
+
 const MessageServices = {
   findMessagesByUserId,
   findById,
   createOne,
   addNewMessageItem,
   getLastMessage,
+  findByIdAndByType,
 };
 
 export default MessageServices;

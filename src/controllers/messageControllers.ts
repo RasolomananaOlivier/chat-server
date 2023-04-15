@@ -19,10 +19,22 @@ const getOneMessage = async (req: Request, res: Response) => {
     userId = req.params.userId;
   const page = +req.query.page!;
 
-  try {
-    const result = await MessageServices.findById(messageId, userId, page);
+  const type = req.query.type;
 
-    res.json(result);
+  try {
+    if (type) {
+      const result = await MessageServices.findByIdAndByType(
+        messageId,
+        userId,
+        type as string
+      );
+
+      res.json(result);
+    } else {
+      const result = await MessageServices.findById(messageId, userId, page);
+
+      res.json(result);
+    }
   } catch (error) {
     if (error instanceof AppError) {
       error.response(res);

@@ -23,6 +23,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
 
+app.get("/api/v1", (req, res) => {
+  res.json({ msg: "hello" });
+});
+app.post("/api/v1", (req, res) => {
+  res.json({ msg: "hello" });
+});
+
 app.use("/api/v1/users", UserRoutes);
 app.use("/api/v1/messages", MessageRoutes);
 app.use("/api/v1/auth", AuthRoutes);

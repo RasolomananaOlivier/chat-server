@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
 
 const dbConnection = () => {
-  const DATABASE =
-    process.env.DATABASE_URI || "mongodb://localhost:27017/quicktalks";
+  let DATABASE;
 
-  console.log("====================================");
-  console.log(DATABASE, process.env.DATABASE_URI);
-  console.log("====================================");
+  if (process.env.NODE_ENV === "production") {
+    DATABASE = process.env.DATABASE_URI;
+  } else {
+    DATABASE = "mongodb://localhost:27017/quicktalks";
+  }
+
+  console.log("DATABASE", process.env.NODE_ENV, DATABASE);
   mongoose
     .connect(DATABASE, {
       useNewUrlParser: true,
